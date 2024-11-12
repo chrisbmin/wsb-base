@@ -1,16 +1,25 @@
 # ---------------------------------------------- #
 # Browsers  ------------------------------------ #
 # ---------------------------------------------- #
-choco install -y googlechrome
-choco install -y firefox
+# choco install -y googlechrome
+winget install -e --id Google.Chrome 
+
+# choco install -y firefox
+winget install -e --id Mozilla.Firefox
+winget install -e --id Mozilla.Firefox.DeveloperEdition
 
 # ---------------------------------------------- #
 # Common tools  --------------------------------- #
 # ---------------------------------------------- #
-choco install -y 7zip
-choco install -y paint.net
+
 choco install -y screentogif
 choco install -y zoomit
+# choco install -y 7zip
+winget install -e --id 7zip.7zip 
+
+#choco install -y paint.net
+winget install -e --id dotPDN.PaintDotNet
+
 winget install -e -h --id WinDirStat.WinDirStat
 winget install -e -h --id Microsoft.BingWallpaper
 winget install -e -h --id Obsidian.Obsidian
@@ -61,7 +70,7 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Roaming\nushell\
 # ---------------------------------------------- #
 # Windows Terminal (stable + preview) install with Cascadia Code PL font
 winget install -e -h --id Microsoft.WindowsTerminal -s msstore
-winget install -e -h --id Microsoft.WindowsTerminalPreview -s msstore
+# winget install -e -h --id Microsoft.WindowsTerminalPreview -s msstore
 choco install -y cascadia-code-nerd-font
 # Windows terminal configuration
 Remove-Item -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
@@ -76,7 +85,7 @@ cp "$env:USERPROFILE\wsb\config\windowsTerminal\icons\*" "$env:USERPROFILE\AppDa
 # Azure tools  --------------------------------- #
 # ---------------------------------------------- #
 winget install -e -h --id Microsoft.AzureCLI
-winget install -e -h --id Microsoft.AzureCosmosEmulator
+#winget install -e -h --id Microsoft.AzureCosmosEmulator
 winget install -e -h --id Microsoft.AzureDataStudio
 winget install -e -h --id Microsoft.azure-iot-explorer
 winget install -e -h --id Microsoft.AzureStorageExplorer

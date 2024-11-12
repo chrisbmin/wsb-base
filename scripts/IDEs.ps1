@@ -6,7 +6,8 @@
 # choco install -y ozcode-vs2022
 
 # Chocolatey version is more up-o-date than winget version
-choco install -y vscode
+#choco install -y vscode
+winget install -e --id Microsoft.VisualStudioCode
 
 # Used to install manually JetBrains IDEs and tools (Rider, .NET Tools)
 # winget install -e -h --id JetBrains.Toolbox
