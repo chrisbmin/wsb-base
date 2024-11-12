@@ -37,7 +37,7 @@ This repository contains the tools I like to use, my config files, my preference
 
 Only a click on the **Install** link below is needed to kaunch the installation. Please make sure you have updated the link with the corresponding path on your fork.
 
-[Install](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/TechWatching/dotfiles/features/initialization/boxstarter.ps1)
+[Install](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/chrisrbmn/wsb-v2/features/initialization/boxstarter.ps1)
 
 ## Disclaimer
 
