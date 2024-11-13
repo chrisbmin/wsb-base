@@ -9,7 +9,7 @@ Contains everything to setup my Windows Engineer desktop environment.
 Execute the following command in an elevated PowerShell window to install the PowerShell profile:
 
 ```
-irm "https://github.com/chrisrbmn/powershell-profile/raw/main/setup.ps1" | iex
+irm "https://github.com/chrisrbmn/wsb-v2/raw/main/setup.ps1" | iex
 ```
 
 
