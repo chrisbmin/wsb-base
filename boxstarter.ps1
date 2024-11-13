@@ -2,6 +2,10 @@
 ## To avoid security concerns you can comment it if you prefer, otherwhise please check the software you install is safe and use this command at your own risk.
 Disable-UAC
 $Boxstarter.AutoLogin=$false
+
+# Install Winget
+Install-Script winget-install -Force
+
 # Install git and clone repository containing scripts and config files
 # TODO: see how to improve install that by using chezmoi (choco install -y chezmoi)
 choco install -y git --params "/GitOnlyOnPath /NoShellIntegration /WindowsTerminal"
