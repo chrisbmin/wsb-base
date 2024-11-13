@@ -18,13 +18,14 @@ function Test-InternetConnection {
 
 try {
     $buildfolder = "$env:systemdrive\build"
-    if (Test-Path -Path $buildfolder) {
-        Remove-Item -Path $buildfolder -Recurse -Force
+    if (!(Test-Path -Path $buildfolder)) {
+        
+        New-Item -ItemType Directory -Path $buildfolder
         Write-Host "Build folder '$buildfolder' existed and has been deleted." -ForegroundColor Yellow 
  
     } else {
         Write-Color -Text "Build Folder '$buildfolder' does not exist,", "Creating it." -Color White,Green
-        New-Item -ItemType Directory -Path $buildfolder
+        Remove-Item -Path $buildfolder -Recurse -Force
     }
 }
 catch {
