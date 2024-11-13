@@ -23,8 +23,8 @@ try {
         Write-Color -Text "Build Folder '$buildfolder' does not exist,", "Creating it." -Color White,Green
 
     } else {
-        Write-Host "Build folder '$buildfolder' existed and has been deleted." -ForegroundColor Yellow 
-        Remove-Item -Path $buildfolder -Recurse -Force
+        Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor Yellow 
+        #Remove-Item -Path $buildfolder -Recurse -Force
     }
 }
 catch {
