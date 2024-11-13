@@ -21,8 +21,7 @@ try {
     if (Test-Path -Path $buildfolder) {
         Remove-Item -Path $buildfolder -Recurse -Force
         Write-Host "Build folder '$buildfolder' existed and has been deleted." -ForegroundColor Yellow 
-        New-Item -ItemType Directory -Path $buildfolder
-        Write-Host "Creating new folder '$buildfolder'." -ForegroundColor Green
+ 
     } else {
         Write-Color -Text "Build Folder '$buildfolder' does not exist,", "Creating it." -Color White,Green
         New-Item -ItemType Directory -Path $buildfolder
