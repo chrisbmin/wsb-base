@@ -4,7 +4,7 @@ Disable-UAC
 $Boxstarter.AutoLogin=$false
 
 # Install Winget
-Install-Script winget-install -Force
+#Install-Script winget-install -Force
 
 # Install git and clone repository containing scripts and config files
 # TODO: see how to improve install that by using chezmoi (choco install -y chezmoi)
