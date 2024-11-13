@@ -4,6 +4,15 @@ Contains everything to setup my Windows Engineer desktop environment.
 
 > Inpired by [Microsoft/windows-dev-box-setup-scripts](https://github.com/Microsoft/windows-dev-box-setup-scripts) and other repositories using [boxstarter](https://boxstarter.org/) to setup their developer machine.
 
+## ⚡ One Line Install (Elevated PowerShell Recommended)
+
+Execute the following command in an elevated PowerShell window to install the PowerShell profile:
+
+```
+irm "https://github.com/chrisrbmn/powershell-profile/raw/main/setup.ps1" | iex
+```
+
+
 ## How does this work?
 
 [Boxstarter](https://boxstarter.org/) is used to avoid interruptions during installation and to launch the installation directly from an [URL](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/chrisrbmn/wsb-v2/refs/heads/main/boxstarter.ps1) without manually downloading any software before. 
