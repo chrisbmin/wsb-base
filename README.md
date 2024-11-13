@@ -1,12 +1,12 @@
-# My personal dot files
+# My personal WorkStation Builder
 
-Contains everything to setup my developer environment.
+Contains everything to setup my Windows Engineer desktop environment.
 
 > Inpired by [Microsoft/windows-dev-box-setup-scripts](https://github.com/Microsoft/windows-dev-box-setup-scripts) and other repositories using [boxstarter](https://boxstarter.org/) to setup their developer machine.
 
 ## How does this work?
 
-[Boxstarter](https://boxstarter.org/) is used to avoid interruptions during installation and to launch the installation directly from an [URL](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/TechWatching/dotfiles/features/initialization/boxstarter.ps1) without manually downloading any software before. 
+[Boxstarter](https://boxstarter.org/) is used to avoid interruptions during installation and to launch the installation directly from an [URL](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/chrisrbmn/wsb-v2/refs/heads/main/boxstarter.ps1) without manually downloading any software before. 
 
 The setup is automated using [PowerShell](https://docs.microsoft.com/en-us/powershell/) scripts.
 
@@ -16,9 +16,9 @@ Software is installed using 2 different package managers for Windows:
 
 I have chosen to use mainly winget to install tools, except when packages were only available on Chocolatey or more up-to-date on Chocolatey.
 
-One of the firsts steps of the bootstarter.ps1 script is to install git and clone this repository. It uses it to call the other scripts in the repository and retrieve the settings files.
+One of the firsts steps of the bootstarter.ps1 script is to install git and clone this repository. It uses the downloaded repo to call all of the other scripts in the repository and retrieve the settings files.
 
-Symbolic links are used to make the different settings files on the machine being configured to point to the settings files contained in this git repository. This enables the files to be commited easily when settings are changed.
+Symbolic links are used where appropriate to make the different settings files on the machine being configured to point to the settings files contained in this git repository. This enables the files to be commited easily when settings are changed.
 
 ## Limitations
 
@@ -35,13 +35,10 @@ The tool [chezmoi](https://www.chezmoi.io/#considering-using-chezmoi) might help
 
 This repository contains the tools I like to use, my config files, my preferences... so you should not use it as-is. You can however take inspiration from it, fork this repository, modify the scripts and settings files with your needs, and use it to set up your development machine. 
 
-Only a click on the **Install** link below is needed to kaunch the installation. Please make sure you have updated the link with the corresponding path on your fork.
+Click on the **Install** link below is needed to launch the installation. Please make sure you have updated the link with the corresponding path on your fork.
 
 [Install](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/chrisrbmn/wsb-v2/refs/heads/main/boxstarter.ps1)
 
 ## Disclaimer
 
 The code in this repository is provided as-is, without any warranties of any kind. Use it at your own risk.
-
-
-
