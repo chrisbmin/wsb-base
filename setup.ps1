@@ -24,7 +24,18 @@ function Test-InternetConnection {
         Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
         #Remove-Item -Path $buildfolder -Recurse -Force
     }
+#function downloadbuilder {
+#    Invoke-WebRequest -Uri "https://github.com/matstocks/PC-Build-Script/archive/master.zip" -OutFile "C:\build\PCBuild.zip"
+#    Expand-Archive C:\build\PCBuild.zip -DestinationPath C:\build\
+#}
 
+# Choco install
+#try {
+#    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+#}
+#catch {
+#    Write-Error "Failed to install Chocolatey. Error: $_"
+#}
 
 
 function Download-Builder {
@@ -43,7 +54,7 @@ function Download-Builder {
             #$fontZipUrl = "https://github.com/ryanoasis/nerd-fonts/releases/download/v${Version}/${FontName}.zip"
             #$zipFilePath = "$env:TEMP\${FontName}.zip"
             #$extractPath = "$env:TEMP\${FontName}"
-            $builderZipUrl = "https://github.com/chrisrbmn/PC-Build-Script/archive/refs/heads/master.zip"
+            $builderZipUrl = "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip"
             $zipFilePath = "$env:TEMP\master.zip"
             $extractPath = "$env:systemdrive\build"
 
