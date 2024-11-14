@@ -18,17 +18,21 @@ function Test-InternetConnection {
 
     $buildfolder = "$env:systemdrive\build"
     if (!(Test-Path -Path $buildfolder)) {
-        New-Item -ItemType Directory -Path $buildfolder
         Write-Host "Build Folder '$buildfolder' does not exist." -f Yellow; Write-Host "`n Creating it..." -f Green;
+        New-Item -ItemType Directory -Path $buildfolder
     } else {
         Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
         #Remove-Item -Path $buildfolder -Recurse -Force
     }
-function downloadbuilder {
+
+try {
     $downloadfolder = "$env:systemdrive\build"
     Write-Host "Downloading and unzipping archive to '$downloadfolder'. Continuing..." -ForegroundColor White 
     Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
     Expand-Archive "$downloadfolder\main.zip" -DestinationPath $downloadfolder
+}
+catch {
+    Write-Error "Failed to download archive. Error: $_"
 }
 
 # Choco install
