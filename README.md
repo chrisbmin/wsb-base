@@ -48,7 +48,7 @@ The code in this repository is provided as-is, without any warranties of any kin
 
 ## ShoutOuts
 The following repo's provided inspiration towards this effort, and I am linking them here to give credit
-https://github.com/matstocks/PC-Build-Script
-https://github.com/TechWatching/dotfiles/
-https://github.com/microsoft/winget-cli
-https://github.com/Microsoft/windows-dev-box-setup-scripts
+- https://github.com/matstocks/PC-Build-Script
+- https://github.com/TechWatching/dotfiles/
+- https://github.com/microsoft/winget-cli
+- https://github.com/Microsoft/windows-dev-box-setup-scripts
