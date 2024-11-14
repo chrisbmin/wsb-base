@@ -25,8 +25,8 @@ function Test-InternetConnection {
         #Remove-Item -Path $buildfolder -Recurse -Force
     }
 function downloadbuilder {
-    Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/master.zip" -OutFile "C:\build\Build.zip"
-    Expand-Archive C:\build\Build.zip -DestinationPath C:\build\
+    Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "C:\build\main.zip"
+    Expand-Archive C:\build\main.zip -DestinationPath C:\build\
 }
 
 # Choco install
