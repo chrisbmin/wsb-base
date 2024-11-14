@@ -98,4 +98,4 @@ try {
 
 Install-Module PSWindowsUpdate
 Add-WUServiceManager -MicrosoftUpdate
-Install-WindowsUpdate -acceptEula -MicrosoftUpdate -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
