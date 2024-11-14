@@ -25,11 +25,14 @@ function Test-InternetConnection {
         #Remove-Item -Path $buildfolder -Recurse -Force
     }
 
+# Download Install Archive / Unpack into build folder.    
 try {
     $downloadfolder = "$env:systemdrive\build"
+    $zipFilePath = "$env:systemdrive\build\main.zip"
     Write-Host "Downloading and unzipping archive to '$downloadfolder'. Continuing..." -ForegroundColor White 
     Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
-    Expand-Archive "$downloadfolder\main.zip" -DestinationPath $downloadfolder
+    Expand-Archive -Path "$downloadfolder\main.zip" -DestinationPath $downloadfolder -Force
+    Remove-Item -Path $zipFilePath -Force
 }
 catch {
     Write-Error "Failed to download archive. Error: $_"
