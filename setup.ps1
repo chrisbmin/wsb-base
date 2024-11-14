@@ -15,28 +15,33 @@ function Test-InternetConnection {
         return $false
     }
 }
+function Create-BuildFolder {
+    try {
+        $buildfolder = "$env:systemdrive\build"
+        if (!(Test-Path -Path $buildfolder)) {
+            New-Item -ItemType Directory -Path $buildfolder
+            Write-Color -Text "Build Folder '$buildfolder' does not exist,", "Creating it." -Color White,Green
 
-try {
-    $buildfolder = "$env:systemdrive\build"
-    if (!(Test-Path -Path $buildfolder)) {
-        New-Item -ItemType Directory -Path $buildfolder
-        Write-Color -Text "Build Folder '$buildfolder' does not exist,", "Creating it." -Color White,Green
-
-    } else {
-        Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor Yellow 
-        #Remove-Item -Path $buildfolder -Recurse -Force
+        } else {
+            Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor Yellow 
+            #Remove-Item -Path $buildfolder -Recurse -Force
+        }
+    }
+    catch {
+        Write-Error "Failed to create build folder '$buildfolder' or folder is not present. Try manually creating the folder? Error: $_"
     }
 }
-catch {
-    Write-Error "Failed to remove/create build folder '$buildfolder' or folder is not present. Try manually creating the folder? Error: $_"
-}
 
-function Download-Builder {
-    param (
+# Check for internet connectivity before proceeding
+if (-not (Test-InternetConnection)) {
+    break
+}
+function Download-BuildFiles {
+    #param (
         #[string]$FontName = "CascadiaCode",
         #[string]$FontDisplayName = "CaskaydiaCove NF",
         #[string]$Version = "3.2.1"
-    )
+    #)
 
     try {
         #[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
