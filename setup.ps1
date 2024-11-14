@@ -20,7 +20,6 @@ function Test-InternetConnection {
     if (!(Test-Path -Path $buildfolder)) {
         New-Item -ItemType Directory -Path $buildfolder
         Write-Host "Build Folder '$buildfolder' does not exist." -f Yellow; Write-Host "`n Creating it..." -f Green;
-
     } else {
         Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
         #Remove-Item -Path $buildfolder -Recurse -Force
