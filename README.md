@@ -2,11 +2,11 @@
 
 Contains everything to setup my Windows Engineer desktop environment.
 
-> Inpired by [Microsoft/windows-dev-box-setup-scripts](https://github.com/Microsoft/windows-dev-box-setup-scripts) and other repositories using [boxstarter](https://boxstarter.org/) to setup their developer machine.
+> Inpired by [Microsoft/windows-dev-box-setup-scripts](https://github.com/Microsoft/windows-dev-box-setup-scripts) and other repositories to setup their developer machine.
 
 ## ⚡ One Line Install (Elevated PowerShell Recommended)
 
-Execute the following command in an elevated PowerShell window to install the PowerShell profile:
+Execute the following command in an elevated PowerShell window to install the Download and Install everything needed:
 
 ```
 irm "https://github.com/chrisrbmn/wsb-v2/raw/main/setup.ps1" | iex
@@ -15,36 +15,29 @@ irm "https://github.com/chrisrbmn/wsb-v2/raw/main/setup.ps1" | iex
 
 ## How does this work?
 
-[Boxstarter](https://boxstarter.org/) is used to avoid interruptions during installation and to launch the installation directly from an [URL](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/chrisrbmn/wsb-v2/refs/heads/main/boxstarter.ps1) without manually downloading any software before. 
-
 The setup is automated using [PowerShell](https://docs.microsoft.com/en-us/powershell/) scripts.
 
 Software is installed using 2 different package managers for Windows: 
 - [Chocolatey](https://chocolatey.org/)
 - [Windows Package Manager](https://docs.microsoft.com/en-us/windows/package-manager/) aka winget
 
+Both package managers are installed as part of the script.
+
 I have chosen to use mainly winget to install tools, except when packages were only available on Chocolatey or more up-to-date on Chocolatey.
 
-One of the firsts steps of the bootstarter.ps1 script is to install git and clone this repository. It uses the downloaded repo to call all of the other scripts in the repository and retrieve the settings files.
+One of the firsts steps of the setup.ps1 script is to create a build folder on the C:\ drive and download this repository to it. It then uses the downloaded scripts in the repository and retrieve and configure the system.
 
-Symbolic links are used where appropriate to make the different settings files on the machine being configured to point to the settings files contained in this git repository. This enables the files to be commited easily when settings are changed.
 
 ## Limitations
 
-The script does not currently handle by-passing already installed software or upgrading it (waiting for winget to handle properly these scenarios). If run multiple times, the tools will be re-installed.
-
-This way of doing things works great to setup a development environment on a new machine. Syncing changes between different machines can be more difficult to manage.
-
-As this repository is public, there is no current way to keep some files private or use secrets.
-
-The tool [chezmoi](https://www.chezmoi.io/#considering-using-chezmoi) might help to solve the 2 last limitations mentionned here.
-
+The script does check if the build folder exists, and just continue's if detected. Essentially the tools will be simply re-installed.
+May explore deleting the folder if it already exists, and recreating it. Also may create a removal script to delete all the implemented changes.
 
 ## Using this repository 
 
-This repository contains the tools I like to use, my config files, my preferences... so you should not use it as-is. You can however take inspiration from it, fork this repository, modify the scripts and settings files with your needs, and use it to set up your development machine. 
+This repository contains the tools I like to use, my config files, my preferences... so you should not use it as-is. You can use it as it, take inspiration from it, fork this repository, modify the scripts and settings files with your needs, and use it to set up your development machine.  Just be aware that if you use it as it, you get everything I want.
 
-Click on the **Install** link below is needed to launch the installation. Please make sure you have updated the link with the corresponding path on your fork.
+Click on the **Install** link below is needed to launch the installation. If you forked this, please make sure you have updated the link with the corresponding path to your forked version.
 
 [Install](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/chrisrbmn/wsb-v2/refs/heads/main/boxstarter.ps1)
 
