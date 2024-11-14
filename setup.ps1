@@ -19,7 +19,7 @@ function Test-InternetConnection {
     $buildfolder = "$env:systemdrive\build"
     if (!(Test-Path -Path $buildfolder)) {
         New-Item -ItemType Directory -Path $buildfolder
-        Write-Host "Build Folder '$buildfolder' does not exist, " -f Yellow -nonewline; Write-Host "Creating it..." -f Green;
+        Write-Host "Build Folder '$buildfolder' does not exist, " -f Yellow -nonewline; Write-Host " Creating it..." -f Green;
 
     } else {
         Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
