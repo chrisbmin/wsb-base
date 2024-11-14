@@ -24,10 +24,10 @@ function Test-InternetConnection {
         Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
         #Remove-Item -Path $buildfolder -Recurse -Force
     }
-#function downloadbuilder {
-#    Invoke-WebRequest -Uri "https://github.com/matstocks/PC-Build-Script/archive/master.zip" -OutFile "C:\build\PCBuild.zip"
-#    Expand-Archive C:\build\PCBuild.zip -DestinationPath C:\build\
-#}
+function downloadbuilder {
+    Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/master.zip" -OutFile "C:\build\Build.zip"
+    Expand-Archive C:\build\Build.zip -DestinationPath C:\build\
+}
 
 # Choco install
 #try {
@@ -38,34 +38,34 @@ function Test-InternetConnection {
 #}
 
 
-function Download-Builder {
-    param (
+#function Download-Builder {
+#    param (
         #[string]$FontName = "CascadiaCode",
         #[string]$FontDisplayName = "CaskaydiaCove NF",
         #[string]$Version = "3.2.1"
-    )
+#    )
 
-    try {
+#    try {
         #[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
         #$fontFamilies = (New-Object System.Drawing.Text.InstalledFontCollection).Families.Name
-        $folderPath = "$env:systemdrive\build"
+#        $folderPath = "$env:systemdrive\build"
         #if ($fontFamilies -notcontains "${FontDisplayName}") {
-        if (Test-Path -Path $folderPath) {
+#        if (Test-Path -Path $folderPath) {
             #$fontZipUrl = "https://github.com/ryanoasis/nerd-fonts/releases/download/v${Version}/${FontName}.zip"
             #$zipFilePath = "$env:TEMP\${FontName}.zip"
             #$extractPath = "$env:TEMP\${FontName}"
-            $builderZipUrl = "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip"
-            $zipFilePath = "$env:TEMP\master.zip"
-            $extractPath = "$env:systemdrive\build"
+#            $builderZipUrl = "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip"
+#            $zipFilePath = "$env:TEMP\master.zip"
+#            $extractPath = "$env:systemdrive\build"
 
-            $webClient = New-Object System.Net.WebClient
-            $webClient.DownloadFileAsync((New-Object System.Uri($builderZipUrl)), $zipFilePath)
+#            $webClient = New-Object System.Net.WebClient
+#            $webClient.DownloadFileAsync((New-Object System.Uri($builderZipUrl)), $zipFilePath)
 
-            while ($webClient.IsBusy) {
-                Start-Sleep -Seconds 2
-            }
+#            while ($webClient.IsBusy) {
+#                Start-Sleep -Seconds 2
+#            }
 
-            Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
+#            Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
             #$destination = (New-Object -ComObject Shell.Application).Namespace(0x14)
             #Get-ChildItem -Path $extractPath -Recurse -Filter "*.ttf" | ForEach-Object {
             #    If (-not(Test-Path "C:\Windows\Fonts\$($_.Name)")) {
@@ -74,12 +74,12 @@ function Download-Builder {
             #}
 
             #Remove-Item -Path $extractPath -Recurse -Force
-            Remove-Item -Path $zipFilePath -Force
-        } else {
-            Write-Host "Builder archive is already deployed"
-        }
-    }
-    catch {
-        Write-Error "Failed to download or deploy workstation builder. Error: $_"
-    }
-}
+#            Remove-Item -Path $zipFilePath -Force
+#        } else {
+#            Write-Host "Builder archive is already deployed"
+ #       }
+#    }
+#    catch {
+#        Write-Error "Failed to download or deploy workstation builder. Error: $_"
+#    }
+#}
