@@ -64,3 +64,23 @@ try {
     }
   }
   Repair-WinGetPackageManager
+  RefreshEnv
+
+  #--- Setting up Windows ---
+#. "$env:systemdrive\build\scripts\InstallWinget.ps1"
+. "$env:systemdrive\build\scripts\FileExplorerSettings.ps1"
+. "$env:systemdrive\build\scripts\RemoveDefaultApps.ps1"
+. "$env:systemdrive\build\scripts\Tools.ps1"
+. "$env:systemdrive\build\scripts\IDEs.ps1"
+
+# TODO: install WSL2 / Ubuntu
+# choco install -y Microsoft-Windows-Subsystem-Linux -source windowsfeatures
+# choco install -y VirtualMachinePlatform -source windowsfeatures
+# wsl --set-default-version 2
+# choco install wsl2 --params "/Version:2 /Retry:true"
+
+# TODO: Docker
+# winget install -e -h --id suse.RancherDesktop
+
+# // windowsfeatures (Windows Sandbox, .NET Framework)
+# // Taskbar (Set-BoxstarterTaskbarOptions)
