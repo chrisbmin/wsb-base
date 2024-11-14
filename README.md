@@ -23,7 +23,7 @@ Software is installed using 2 different package managers for Windows:
 
 Both package managers are installed as part of the script.
 
-I have chosen to use mainly winget to install tools, except when packages were only available on Chocolatey or more up-to-date on Chocolatey.
+I have chosen to mainly use 'winget' to install tools, except when packages were only available on Chocolatey or more up-to-date on Chocolatey.
 
 One of the firsts steps of the setup.ps1 script is to create a build folder on the C:\ drive and download this repository to it. It then uses the downloaded scripts in the repository and retrieve and configure the system.
 
