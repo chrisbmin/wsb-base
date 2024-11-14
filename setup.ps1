@@ -15,24 +15,22 @@ function Test-InternetConnection {
         return $false
     }
 }
-function CreateBuildFolder {
-    try {
-        $buildfolder = "$env:systemdrive\build"
-        if (!(Test-Path -Path $buildfolder)) {
-            New-Item -ItemType Directory -Path $buildfolder
-            Write-Color -Text "Build Folder '$buildfolder' does not exist,", "Creating it." -Color White,Green
 
-        } else {
-            Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor Yellow 
-            #Remove-Item -Path $buildfolder -Recurse -Force
-        }
+    $buildfolder = "$env:systemdrive\build"
+    if (!(Test-Path -Path $buildfolder)) {
+        New-Item -ItemType Directory -Path $buildfolder
+        Write-Color -Text "Build Folder '$buildfolder' does not exist,", "Creating it." -Color White,Green
+
+    } else {
+        Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor Yellow 
+        #Remove-Item -Path $buildfolder -Recurse -Force
     }
-    catch {
-        Write-Error "Failed to remove/create build folder '$buildfolder' or folder is not present. Try manually creating the folder? Error: $_"
-    }
+catch {
+    Write-Error "Failed to remove/create build folder '$buildfolder' or folder is not present. Try manually creating the folder? Error: $_"
 }
 
-function Download-BuildFiles {
+
+function Download-Builder {
     param (
         #[string]$FontName = "CascadiaCode",
         #[string]$FontDisplayName = "CaskaydiaCove NF",
