@@ -25,9 +25,10 @@ function Test-InternetConnection {
         #Remove-Item -Path $buildfolder -Recurse -Force
     }
 function downloadbuilder {
+    $buildfolder = "$env:systemdrive\build"
     Write-Host "Downloading and unzipping archive to '$buildfolder'. Continuing..." -ForegroundColor White 
-    Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/wsb-v2-main.zip" -OutFile "C:\build\wsb-v2-main.zip"
-    Expand-Archive C:\build\wsb-v2-main.zip -DestinationPath C:\build\
+    Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/wsb-v2-main.zip" -OutFile "$buildfolder\wsb-v2-main.zip"
+    Expand-Archive "$buildfolder\wsb-v2-main.zip" -DestinationPath $buildfolder
 }
 
 # Choco install
