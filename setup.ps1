@@ -19,15 +19,13 @@ function Test-InternetConnection {
     $buildfolder = "$env:systemdrive\build"
     if (!(Test-Path -Path $buildfolder)) {
         New-Item -ItemType Directory -Path $buildfolder
-        Write-Color -Text "Build Folder '$buildfolder' does not exist,", "Creating it." -Color White,Green
+        Write-Host "Build Folder '$buildfolder' does not exist," -f Yellow -nonewline; Write-Host "Creating it..." -f Green;
 
     } else {
-        Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor Yellow 
+        Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
         #Remove-Item -Path $buildfolder -Recurse -Force
     }
-catch {
-    Write-Error "Failed to remove/create build folder '$buildfolder' or folder is not present. Try manually creating the folder? Error: $_"
-}
+
 
 
 function Download-Builder {
