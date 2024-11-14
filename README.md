@@ -6,7 +6,7 @@ Contains everything to setup my Windows Engineer desktop environment.
 
 ## ⚡ One Line Install (Elevated PowerShell Recommended)
 
-Execute the following command in an elevated PowerShell window to install the Download and Install everything needed:
+Execute the following command in an elevated PowerShell window to Download and Install everything needed:
 
 ```
 irm "https://github.com/chrisrbmn/wsb-v2/raw/main/setup.ps1" | iex
