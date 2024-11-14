@@ -32,11 +32,20 @@ if (-not (Test-InternetConnection)) {
   
 # Download Install Archive / Unpack into build folder.    
 try {
+    $builderUrl = "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip"
     $downloadfolder = "$env:systemdrive\build"
-    $zipFilePath = "$env:systemdrive\build\main.zip"
-    Write-Host "Downloading and unzipping archive to '$downloadfolder'." -ForegroundColor White 
-    Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
-    Expand-Archive -Path "$downloadfolder\main.zip" -DestinationPath $downloadfolder -Force
+    $zipFilePath = "$env:TEMP\main.zip"
+    $extractPath = "$env:systemdrive\build"
+    Write-Host "Downloading and unzipping archive to '$zipFilePath'." -ForegroundColor White
+    $webClient = New-Object System.Net.WebClient
+            $webClient.DownloadFileAsync((New-Object System.Uri($builderUrl)), $zipFilePath)
+
+            while ($webClient.IsBusy) {
+                Start-Sleep -Seconds 2
+            } 
+    #Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
+    #Expand-Archive -Path "$downloadfolder\main.zip" -DestinationPath $downloadfolder -Force
+    Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
     Remove-Item -Path $zipFilePath -Force
 }
 catch {
@@ -67,11 +76,11 @@ try {
   RefreshEnv
 
   #--- Setting up Windows ---
-#. "$env:systemdrive\build\scripts\InstallWinget.ps1"
+#. "$env:systemdrive\build\wsb-v2-main\scripts\InstallWinget.ps1"
 . "$env:systemdrive\build\scripts\FileExplorerSettings.ps1"
-. "$env:systemdrive\build\scripts\RemoveDefaultApps.ps1"
-. "$env:systemdrive\build\scripts\Tools.ps1"
-. "$env:systemdrive\build\scripts\IDEs.ps1"
+#. "$env:systemdrive\build\scripts\RemoveDefaultApps.ps1"
+#. "$env:systemdrive\build\scripts\Tools.ps1"
+#. "$env:systemdrive\build\scripts\IDEs.ps1"
 
 # TODO: install WSL2 / Ubuntu
 # choco install -y Microsoft-Windows-Subsystem-Linux -source windowsfeatures
