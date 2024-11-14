@@ -47,7 +47,7 @@ Click on the **Install** link below is needed to launch the installation. If you
 The code in this repository is provided as-is, without any warranties of any kind. Use it at your own risk.
 
 ## ShoutOuts
-The following repo's provided inspiration towards this effort, and I am linking them here to give credit
+The following repo's provided inspiration towards this effort, and I am linking them here to give them credit for their fantastic work!
 - https://github.com/matstocks/PC-Build-Script
 - https://github.com/TechWatching/dotfiles/
 - https://github.com/microsoft/winget-cli
