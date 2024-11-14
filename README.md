@@ -38,9 +38,11 @@ May explore deleting the folder if it already exists, and recreating it. Also ma
 
 This repository contains the tools I like to use, my config files, my preferences... so you should not use it as-is. You can use it as it, take inspiration from it, fork this repository, modify the scripts and settings files with your needs, and use it to set up your development machine.  Just be aware that if you use it as it, you get everything I want.
 
-Click on the **Install** link below is needed to launch the installation. If you forked this, please make sure you have updated the link with the corresponding path to your forked version.
+Click on the copy icon below and paste into an elevated Powershell. If you have forked this repo, please make sure you have updated the link with the corresponding path to your forked version.
 
-[Install](https://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/chrisrbmn/wsb-v2/refs/heads/main/boxstarter.ps1)
+```
+irm "https://github.com/chrisrbmn/wsb-v2/raw/main/setup.ps1" | iex
+```
 
 ## Disclaimer
 
