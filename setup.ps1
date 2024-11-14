@@ -17,6 +17,23 @@ function Test-InternetConnection {
 }
 
     $buildfolder = "$env:systemdrive\build"
+    try {
+        # Check if the source file exists
+        if (Test-Path -Path $buildfolder) {
+            # If the folder exists, delete it
+            Remove-Item -Path $buildfolder -Force
+            Write-Host "Build Folder located and deleted successfully."
+        } else {
+            New-Item -ItemType Directory -Path $buildfolder
+            Write-Host "Build Folder '$buildfolder' does not exist." -f Yellow; Write-Host "`n Creating it..." -f Green;
+        }
+        
+        }
+        catch {
+            Write-Error "Failed to remove Build Folder or doesn't exist. Error: $_"
+        }
+
+
     if (!(Test-Path -Path $buildfolder)) {
         New-Item -ItemType Directory -Path $buildfolder
         Write-Host "Build Folder '$buildfolder' does not exist." -f Yellow; Write-Host "`n Creating it..." -f Green;
