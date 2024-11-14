@@ -33,6 +33,7 @@ One of the firsts steps of the setup.ps1 script is to create a build folder on t
 The script does check if the build folder exists, and just continue's if detected. Essentially the tools will be simply re-installed.
 May explore deleting the folder if it already exists, and recreating it. Also may create a removal script to delete all the implemented changes.
 
+
 ## Using this repository 
 
 This repository contains the tools I like to use, my config files, my preferences... so you should not use it as-is. You can use it as it, take inspiration from it, fork this repository, modify the scripts and settings files with your needs, and use it to set up your development machine.  Just be aware that if you use it as it, you get everything I want.
@@ -44,3 +45,10 @@ Click on the **Install** link below is needed to launch the installation. If you
 ## Disclaimer
 
 The code in this repository is provided as-is, without any warranties of any kind. Use it at your own risk.
+
+## ShoutOuts
+The following repo's provided inspiration towards this effort, and I am linking them here to give credit
+https://github.com/matstocks/PC-Build-Script
+https://github.com/TechWatching/dotfiles/
+https://github.com/microsoft/winget-cli
+https://github.com/Microsoft/windows-dev-box-setup-scripts
