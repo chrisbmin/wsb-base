@@ -70,14 +70,16 @@ try {
     # Check to be sure it acutally installed
     if (-not(Get-Module -ListAvailable -Name Microsoft.Winget.Client)) {
       throw "Microsoft.Winget.Client was not found. Check that the Windows Package Manager PowerShell module was installed correctly."
+    } else {
+        Write-Host "Winget Client was installed successfully!" -ForegroundColor White
     }
   }
   Repair-WinGetPackageManager
-  RefreshEnv
+
 
   #--- Setting up Windows ---
 #. "$env:systemdrive\build\wsb-v2-main\scripts\InstallWinget.ps1"
-. "$env:systemdrive\build\scripts\FileExplorerSettings.ps1"
+#. "$env:systemdrive\build\scripts\FileExplorerSettings.ps1"
 #. "$env:systemdrive\build\scripts\RemoveDefaultApps.ps1"
 #. "$env:systemdrive\build\scripts\Tools.ps1"
 #. "$env:systemdrive\build\scripts\IDEs.ps1"
