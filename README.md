@@ -9,7 +9,7 @@ Contains everything to setup my Windows Engineer desktop environment.
 Execute the following command in an elevated PowerShell window to Download and Install everything needed:
 
 ```
-irm "https://github.com/chrisrbmn/wsb-v2/raw/main/setup.ps1" | iex
+irm "https://github.com/chrisrbmn/wsb-base/raw/main/setup.ps1" | iex
 ```
 
 
@@ -41,7 +41,7 @@ This repository contains the tools I like to use, my config files, my preference
 Click on the copy icon below and paste into an elevated Powershell. If you have forked this repo, please make sure you have updated the link with the corresponding path to your forked version.
 
 ```
-irm "https://github.com/chrisrbmn/wsb-v2/raw/main/setup.ps1" | iex
+irm "https://github.com/chrisrbmn/wsb-base/raw/main/setup.ps1" | iex
 ```
 
 ## Disclaimer
