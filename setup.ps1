@@ -4,6 +4,8 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     break
 }
 
+Set-ExecutionPolicy remotesigned
+
 # Function to test internet connectivity
 function Test-InternetConnection {
     try {
