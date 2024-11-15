@@ -53,12 +53,99 @@ catch {
 }
 
 # Choco install
+# Check to see if directories are already in place, and if yes, delete everything, and reinstall everything
 try {
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-}
-catch {
-    Write-Error "Failed to install Chocolatey. Error: $_"
-}
+    # Check if the source file exists
+    $chocofolder = "C:\ProgramData\chocolatey"
+    if (Test-Path -Path $chocofolder) {
+        # If the file exists, delete the folder
+        $userKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment',$true)
+        $userPath = $userKey.GetValue('PATH', [string]::Empty, 'DoNotExpandEnvironmentNames').ToString()
+
+        $machineKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\ControlSet001\Control\Session Manager\Environment\',$true)
+        $machinePath = $machineKey.GetValue('PATH', [string]::Empty, 'DoNotExpandEnvironmentNames').ToString()
+
+        $backupPATHs = @(
+            "User PATH: $userPath"
+            "Machine PATH: $machinePath"
+        )
+        $backupFile = "C:\PATH_backups_ChocolateyUninstall.txt"
+        $backupPATHs | Set-Content -Path $backupFile -Encoding UTF8 -Force
+
+        $warningMessage = "
+            This could cause issues after reboot where nothing is found if something goes wrong.
+            In that case, look at the backup file for the original PATH values in '$backupFile'.
+        "
+        if ($userPath -like "*$env:ChocolateyInstall*") {
+            Write-Verbose "Chocolatey Install location found in User Path. Removing..."
+            Write-Warning $warningMessage
+
+            $newUserPATH = @(
+                $userPath -split [System.IO.Path]::PathSeparator |
+                    Where-Object { $_ -and $_ -ne "$env:ChocolateyInstall\bin" }
+            ) -join [System.IO.Path]::PathSeparator
+
+            # NEVER use [Environment]::SetEnvironmentVariable() for PATH values; see https://github.com/dotnet/corefx/issues/36449
+            # This issue exists in ALL released versions of .NET and .NET Core as of 12/19/2019
+            $userKey.SetValue('PATH', $newUserPATH, 'ExpandString')
+        }
+
+        if ($machinePath -like "*$env:ChocolateyInstall*") {
+            Write-Verbose "Chocolatey Install location found in Machine Path. Removing..."
+            Write-Warning $warningMessage
+
+            $newMachinePATH = @(
+                $machinePath -split [System.IO.Path]::PathSeparator |
+                    Where-Object { $_ -and $_ -ne "$env:ChocolateyInstall\bin" }
+            ) -join [System.IO.Path]::PathSeparator
+
+            # NEVER use [Environment]::SetEnvironmentVariable() for PATH values; see https://github.com/dotnet/corefx/issues/36449
+            # This issue exists in ALL released versions of .NET and .NET Core as of 12/19/2019
+            $machineKey.SetValue('PATH', $newMachinePATH, 'ExpandString')
+        }
+
+        # Adapt for any services running in subfolders of ChocolateyInstall
+        $agentService = Get-Service -Name chocolatey-agent -ErrorAction SilentlyContinue
+        if ($agentService -and $agentService.Status -eq 'Running') {
+            $agentService.Stop()
+        }
+        # TODO: add other services here
+
+        Remove-Item -Path $env:ChocolateyInstall -Recurse -Force -WhatIf
+
+        'ChocolateyInstall', 'ChocolateyLastPathUpdate' | ForEach-Object {
+            foreach ($scope in 'User', 'Machine') {
+                [Environment]::SetEnvironmentVariable($_, [string]::Empty, $scope)
+            }
+        }
+
+        $machineKey.Close()
+        $userKey.Close()
+
+        Remove-Item -Path $chocofolder -Force
+        Write-Host "Chocolately deleted successfully."
+    } else {
+        Write-Host "Chocolately Profile does not exist @ [$PROFILE]. Installing..."
+        try {
+            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+        }
+        catch {
+            Write-Error "Failed to install Chocolatey. Error: $_"
+        }
+    }
+    
+    }
+    catch {
+        Write-Error "Failed to remove Chocolately or not installed. Error: $_"
+    }
+
+
+#try {
+#    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+#}
+#catch {
+#    Write-Error "Failed to install Chocolatey. Error: $_"
+#}
 
 # Winget install
 try {
