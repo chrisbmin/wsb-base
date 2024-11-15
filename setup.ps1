@@ -60,7 +60,7 @@ try {
         }
         Write-Host "Archive Downloaded successfully!"
     } else {
-        Write-Host "Chocolately Profile does not exist @ [$chocofolder]. Installing..."
+        Write-Host "Build Folder does not exist @ [$buildfolder]. Downloading Files..."
         try {
             $webClient = New-Object System.Net.WebClient
             $webClient.DownloadFileAsync((New-Object System.Uri($builderUrl)), $zipFilePath)
