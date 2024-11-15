@@ -554,19 +554,19 @@ function ReclaimWindows10 {
 #}
 
 # Custom power profile used for our customers. Ensures systems do not go to sleep.
-function PowerSettings {
-    POWERCFG -DUPLICATESCHEME 381b4222-f694-41f0-9685-ff5bb260df2e 381b4222-f694-41f0-9685-ff5bb260aaaa
-    POWERCFG -CHANGENAME 381b4222-f694-41f0-9685-ff5bb260aaaa "CBMN Power Management"
-    POWERCFG -SETACTIVE 381b4222-f694-41f0-9685-ff5bb260aaaa
-    POWERCFG -Change -monitor-timeout-ac 15
-    POWERCFG -CHANGE -monitor-timeout-dc 5
-    POWERCFG -CHANGE -disk-timeout-ac 30
-    POWERCFG -CHANGE -disk-timeout-dc 5
-    POWERCFG -CHANGE -standby-timeout-ac 0
-    POWERCFG -CHANGE -standby-timeout-dc 30
-    POWERCFG -CHANGE -hibernate-timeout-ac 0
-    POWERCFG -CHANGE -hibernate-timeout-dc 0
-}
+#function PowerSettings {
+#    POWERCFG -DUPLICATESCHEME 381b4222-f694-41f0-9685-ff5bb260df2e 381b4222-f694-41f0-9685-ff5bb260aaaa
+#    POWERCFG -CHANGENAME 381b4222-f694-41f0-9685-ff5bb260aaaa "CBMN Power Management"
+#    POWERCFG -SETACTIVE 381b4222-f694-41f0-9685-ff5bb260aaaa
+#    POWERCFG -Change -monitor-timeout-ac 15
+#    POWERCFG -CHANGE -monitor-timeout-dc 5
+#    POWERCFG -CHANGE -disk-timeout-ac 30
+#    POWERCFG -CHANGE -disk-timeout-dc 5
+#    POWERCFG -CHANGE -standby-timeout-ac 0
+#    POWERCFG -CHANGE -standby-timeout-dc 30
+#    POWERCFG -CHANGE -hibernate-timeout-ac 0
+#    POWERCFG -CHANGE -hibernate-timeout-dc 0
+#}
 
 #function RestartPC{
     ##########
@@ -584,7 +584,7 @@ function PowerSettings {
 #ReclaimWindows10
 #LayoutDesign
 #ApplyDefaultApps
-PowerSettings
+#PowerSettings
 #Branding
 #SetPCName
 #RestartPC
