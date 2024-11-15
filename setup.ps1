@@ -81,7 +81,10 @@ try {
         }
         Write-Host "Chocolately installed successfully."
     }
-    
+}
+catch {
+    Write-Error "Failed to install Chocolatey. Error: $_"
+}  
 
 
 #try {
