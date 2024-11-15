@@ -173,27 +173,56 @@ try {
 # // Taskbar (Set-BoxstarterTaskbarOptions)
 
 ## WINDOWS UPDATES ##
+# Install the PSWindowsUpdate module if not already installed
+if (-not (Get-Module -Name PSWindowsUpdate -ListAvailable)) {
+    Install-Module -Name PSWindowsUpdate -Force
+}
+
+# Import the PSWindowsUpdate module
+Import-Module -Name PSWindowsUpdate -Force -ErrorAction Stop
+
+# Check for available Windows updates
+$updates = Get-WindowsUpdate -AcceptAll -Install -IgnoreReboot
+
+# Check if any updates were installed
+if ($updates.Count -gt 0) {
+    Write-Output "Installed Windows Updates:"
+    foreach ($update in $updates) {
+        Write-Output "$($update.Title) - $($update.Description)"
+    }
+    $InstalledUpdates = Get-WUList
+    Write-Output "List of Installed Updates:"
+    foreach ($installedUpdate in $InstalledUpdates) {
+        Write-Output "$($installedUpdate.Title)"
+    }
+} else {
+    Write-Output "No updates were installed."
+}
+
+
+
+
 # Install the Windows Update module
-Install-Module PSWindowsUpdate
+#Install-Module PSWindowsUpdate
 
 # Import the Windows Update module
-Import-Module PSWindowsUpdate
+#Import-Module -Name PSWindowsUpdate -Force -ErrorAction Stop
 
 #Add-WUServiceManager -MicrosoftUpdate
 # Check for updates
-Get-WindowsUpdate -AcceptAll -Install
+#Get-WindowsUpdate -AcceptAll -Install
 #Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 
 Write-Host "Almost Complete - Let's reboot to make it stick." -ForegroundColor White
 
-function Restart-PC{
+#function Restart-PC{
     ##########
     # Restart
     ##########
-    Write-Host
-    Write-Host "Press any key to restart your system..." -ForegroundColor Black -BackgroundColor White
-    $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-    Write-Host "Restarting..."
-    Restart-Computer
-}
-Restart-PC
+#    Write-Host
+#    Write-Host "Press any key to restart your system..." -ForegroundColor Black -BackgroundColor White
+#    $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+#    Write-Host "Restarting..."
+#    Restart-Computer
+#}
+#Restart-PC
