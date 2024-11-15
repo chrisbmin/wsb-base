@@ -36,7 +36,7 @@ if (-not (Test-InternetConnection)) {
 # Download/Install Build Archive / Unpack into build folder.  
 try {
     # Check if the source file exists
-    $builderUrl = "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip"
+    $builderUrl = "https://github.com/chrisrbmn/wsb-base/archive/refs/heads/main.zip"
     $buildfolder = "$env:systemdrive\build"
     $zipFilePath = "$env:TEMP\main.zip"
     $extractPath = "$env:systemdrive\build"
@@ -53,8 +53,6 @@ try {
             while ($webClient.IsBusy) {
                 Start-Sleep -Seconds 2
             } 
-            #Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
-            #Expand-Archive -Path "$downloadfolder\main.zip" -DestinationPath $downloadfolder -Force
             Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
             Remove-Item -Path $zipFilePath -Force
         }
@@ -71,8 +69,6 @@ try {
             while ($webClient.IsBusy) {
                 Start-Sleep -Seconds 2
             } 
-            #Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
-            #Expand-Archive -Path "$downloadfolder\main.zip" -DestinationPath $downloadfolder -Force
             Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
             Remove-Item -Path $zipFilePath -Force
         }
@@ -126,13 +122,6 @@ try {
         Write-Error "Failed to install Chocolatey. Error: $_"
     }
 ###
-
-#try {
-#    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-#}
-#catch {
-#    Write-Error "Failed to install Chocolatey. Error: $_"
-#}
 
 # Winget install
 try {
