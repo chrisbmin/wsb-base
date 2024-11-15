@@ -32,6 +32,22 @@ winget install -e -h --id Microsoft.PowerToys # settings to sync
 #winget install -e -h --id Logitech.Options
 #winget install -e -h --id Dell.DisplayManager
 
+
+# ---------------------------------------------- #
+# Windows Terminal ----------------------------- #
+# ---------------------------------------------- #
+# Windows Terminal (stable + preview) install with Cascadia Code PL font
+winget install -e -h --id Microsoft.WindowsTerminal -s msstore
+# winget install -e -h --id Microsoft.WindowsTerminalPreview -s msstore
+
+# Removing here as this will be installed via PowerShell Profile Repo
+choco install -y cascadia-code-nerd-font
+
+# Chocolatey version is more up-o-date than winget version
+#choco install -y vscode
+winget install -e --id Microsoft.VisualStudioCode
+
+
 # ---------------------------------------------- #
 # Dev tools  ----------------------------------- #
 # ---------------------------------------------- #
@@ -65,15 +81,6 @@ winget install -e -h --id Microsoft.PowerShell
 #New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Roaming\nushell\config.nu" -Target "$env:USERPROFILE\wsb\config\nu\config.nu"
 # config auto complete dotnet / nuke / ...
 
-# ---------------------------------------------- #
-# Windows Terminal ----------------------------- #
-# ---------------------------------------------- #
-# Windows Terminal (stable + preview) install with Cascadia Code PL font
-winget install -e -h --id Microsoft.WindowsTerminal -s msstore
-# winget install -e -h --id Microsoft.WindowsTerminalPreview -s msstore
-
-# Removing here as this will be installed via PowerShell Profile Repo
-#choco install -y cascadia-code-nerd-font
 
 # Windows terminal configuration
 #Remove-Item -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
@@ -87,13 +94,13 @@ winget install -e -h --id Microsoft.WindowsTerminal -s msstore
 # ---------------------------------------------- #
 # Azure tools  --------------------------------- #
 # ---------------------------------------------- #
-#winget install -e -h --id Microsoft.AzureCLI
+winget install -e -h --id Microsoft.AzureCLI
 #winget install -e -h --id Microsoft.AzureCosmosEmulator
-#winget install -e -h --id Microsoft.AzureDataStudio
+winget install -e -h --id Microsoft.AzureDataStudio
 #winget install -e -h --id Microsoft.azure-iot-explorer
-#winget install -e -h --id Microsoft.AzureStorageExplorer
-#winget install -e -h --id Pulumi.Pulumi
-#winget install -e -h --id Microsoft.AzureFunctionsCoreTools
+winget install -e -h --id Microsoft.AzureStorageExplorer
+winget install -e -h --id Pulumi.Pulumi
+winget install -e -h --id Microsoft.AzureFunctionsCoreTools
 # Azurite can be installed through vscode extension or as a global npm package
 # pnpm add -g azurite
 

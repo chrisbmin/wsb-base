@@ -55,16 +55,16 @@ function ReclaimWindows10 {
     # Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation"
 
     # Disable Bing Search in Start Menu
-    Write-Host "Disabling Bing Search in Start Menu..."
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
+    #Write-Host "Disabling Bing Search in Start Menu..."
+    #Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
 
     # Enable Bing Search in Start Menu
     # Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled"
 
     # Disable Location Tracking
-    Write-Host "Disabling Location Tracking..."
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 0
-    Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0
+    #Write-Host "Disabling Location Tracking..."
+    #Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 0
+    #Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0
 
     # Enable Location Tracking
     # Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 1
@@ -113,24 +113,24 @@ function ReclaimWindows10 {
     # Remove-ItemProperty -Path "HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts"
 
     # Restrict Windows Update P2P only to local network
-    Write-Host "Restricting Windows Update P2P only to local network..."
-    Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 1
-    If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
-        New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
-    }
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
+    #Write-Host "Restricting Windows Update P2P only to local network..."
+    #Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 1
+    #If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
+    #    New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
+    #}
+    #Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
 
     # Unrestrict Windows Update P2P
     # Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode"
     # Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode"
 
     # Remove AutoLogger file and restrict directory
-    Write-Host "Removing AutoLogger file and restricting directory..."
-    $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
-    If (Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl") {
-        Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
-    }
-    icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
+    #Write-Host "Removing AutoLogger file and restricting directory..."
+    #$autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
+    #If (Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl") {
+    #    Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
+    #}
+    #icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
 
     # Unrestrict AutoLogger directory
     # $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
@@ -192,8 +192,8 @@ function ReclaimWindows10 {
     # Remove-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware"
 
     # Disable Windows Update automatic restart
-    Write-Host "Disabling Windows Update automatic restart..."
-    Set-ItemProperty -Path "HKLM:\Software\Microsoft\WindowsUpdate\UX\Settings" -Name "UxOption" -Type DWord -Value 1
+    #Write-Host "Disabling Windows Update automatic restart..."
+    #Set-ItemProperty -Path "HKLM:\Software\Microsoft\WindowsUpdate\UX\Settings" -Name "UxOption" -Type DWord -Value 1
 
     # Enable Windows Update automatic restart
     # Set-ItemProperty -Path "HKLM:\Software\Microsoft\WindowsUpdate\UX\Settings" -Name "UxOption" -Type DWord -Value 0
@@ -233,12 +233,12 @@ function ReclaimWindows10 {
     ##########
 
     # Disable Action Center
-    Write-Host "Disabling Action Center..."
-    If (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer")) {
-      New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" | Out-Null
-    }
-    Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
+    #Write-Host "Disabling Action Center..."
+    #If (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer")) {
+    #  New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" | Out-Null
+    #}
+    #Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
+    #Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
 
     # Enable Action Center
     # Remove-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter"
@@ -255,18 +255,18 @@ function ReclaimWindows10 {
     # Remove-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen"
 
     # Disable Autoplay
-    Write-Host "Disabling Autoplay..."
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1
+    #Write-Host "Disabling Autoplay..."
+    #Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1
 
     # Enable Autoplay
     # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 0
 
     # Disable Autorun for all drives
-     Write-Host "Disabling Autorun for all drives..."
-     If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
-       New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
-    }
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
+    # Write-Host "Disabling Autorun for all drives..."
+    # If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
+    #   New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
+    #}
+    # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
 
     # Enable Autorun
     # Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun"
@@ -279,15 +279,15 @@ function ReclaimWindows10 {
     # Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "510"
 
     # Hide Search button / box
-    Write-Host "Hiding Search Box / Button..."
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type DWord -Value 0
+    #Write-Host "Hiding Search Box / Button..."
+    #Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type DWord -Value 0
 
     # Show Search button / box
     # Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode"
 
     # Hide Task View button
-    Write-Host "Hiding Task View button..."
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type DWord -Value 0
+    #Write-Host "Hiding Task View button..."
+    #Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type DWord -Value 0
 
     # Show Task View button
     # Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton"
@@ -321,8 +321,8 @@ function ReclaimWindows10 {
     # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 1
 
     # Show hidden files
-    #Write-Host "Showing hidden files..."
-    #Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 1
+    Write-Host "Showing hidden files..."
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 1
 
     # Hide hidden files
     # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 2
@@ -549,17 +549,17 @@ function ReclaimWindows10 {
     }
 
 # Uploads a default layout to all NEW users that log into the system. Effects task bar and start menu
-function LayoutDesign {
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-        Exit
-    }
-    Import-StartLayout -LayoutPath "c:\build\PC-Build-Script-master\LayoutModification.xml" -MountPath $env:SystemDrive\
-    }
+#function LayoutDesign {
+#    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+#        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+#        Exit
+#    }
+#    Import-StartLayout -LayoutPath "$env:systemdrive\build\wsb-v2-main\config\LayoutModification.xml" -MountPath $env:SystemDrive\
+#    }
     
-function ApplyDefaultApps {
-    dism /online /Import-DefaultAppAssociations:c:\build\PC-Build-Script-master\AppAssociations.xml
-}
+#function ApplyDefaultApps {
+#    dism /online /Import-DefaultAppAssociations:$env:systemdrive\build\wsb-v2-main\config\AppAssociations.xml
+#}
 
 # Custom power profile used for our customers. Ensures systems do not go to sleep.
 function PowerSettings {
@@ -593,6 +593,6 @@ function RestartPC{
 #LayoutDesign
 #ApplyDefaultApps
 PowerSettings
-Branding
+#Branding
 #SetPCName
 RestartPC
