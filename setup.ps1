@@ -172,6 +172,7 @@ try {
 ## WINDOWS UPDATES ##
 # Install the Windows Update module
 Install-Module PSWindowsUpdate
+
 # Import the Windows Update module
 Import-Module PSWindowsUpdate
 

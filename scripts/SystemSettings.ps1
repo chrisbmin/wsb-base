@@ -327,6 +327,13 @@ function ReclaimWindows10 {
     # Hide hidden files
     # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 2
 
+    # Show protected OS Files
+    #Write-Host "Showing protected OS files..."
+    #Set-ItemProperty -Path "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Type DWORD -Value 1
+
+    # Hide protected OS Files
+    #Set-ItemProperty -Path "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Type DWORD -Value 0
+
     # Change default Explorer view to "Computer"
     Write-Host "Changing default Explorer view to `"Computer`"..."
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1
