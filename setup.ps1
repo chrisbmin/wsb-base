@@ -60,6 +60,7 @@ try {
     $chococachefolder = "C:\ProgramData\ChocolateyHttpCache"
     if (Test-Path -Path $chocofolder) {
         # If the file exists, delete the folder
+        
         Remove-Item -Path $chocofolder -Force
         Remove-Item -Path $chococachefolder -Force
         Write-Host "Chocolately deleted successfully."
@@ -70,7 +71,7 @@ try {
         catch {
             Write-Error "Failed to install Chocolatey. Error: $_"
         }
-        Write-Host "Chocolately installed successfully."
+        Write-Host "Chocolately installed successfully!"
     } else {
         Write-Host "Chocolately Profile does not exist @ [$chocofolder]. Installing..."
         try {
@@ -79,13 +80,14 @@ try {
         catch {
             Write-Error "Failed to install Chocolatey. Error: $_"
         }
-        Write-Host "Chocolately installed successfully."
+        Write-Host "Chocolately installed successfully!"
     }
-}
-catch {
-    Write-Error "Failed to install Chocolatey. Error: $_"
-}  
-
+    
+    }
+    catch {
+        Write-Error "Failed to install Chocolatey. Error: $_"
+    }
+###
 
 #try {
 #    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
