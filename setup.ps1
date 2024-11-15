@@ -15,22 +15,22 @@ function Test-InternetConnection {
         return $false
     }
 }
-
-    $buildfolder = "$env:systemdrive\build"
-    if (!(Test-Path -Path $buildfolder)) {
-        Write-Host "Build Folder '$buildfolder' does not exist." -f Yellow; Write-Host "`n Creating it..." -f Green;
-        New-Item -ItemType Directory -Path $buildfolder
-    } else {
-        Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
-        #Remove-Item -Path $buildfolder -Recurse -Force
-    }
-
 # Check for internet connectivity before proceeding
 if (-not (Test-InternetConnection)) {
     break
 }
+
+#    $buildfolder = "$env:systemdrive\build"
+#    if (!(Test-Path -Path $buildfolder)) {
+#        Write-Host "Build Folder '$buildfolder' does not exist." -f Yellow; Write-Host "`n Creating it..." -f Green;
+#        New-Item -ItemType Directory -Path $buildfolder
+#    } else {
+#        Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
+#        #Remove-Item -Path $buildfolder -Recurse -Force
+#    }
+
   
-# Download Install Archive / Unpack into build folder.  
+# Download/Install Build Archive / Unpack into build folder.  
 try {
     # Check if the source file exists
     $builderUrl = "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip"
@@ -38,8 +38,8 @@ try {
     $zipFilePath = "$env:TEMP\main.zip"
     $extractPath = "$env:systemdrive\build"
     if (Test-Path -Path $buildfolder) {
-        # If the file exists, delete the folder
-        
+        # If the file exists, delete the folder and start over.
+        Write-Host "Build folder '$buildfolder' is present. Deleting the folder and starting fresh..." -ForegroundColor White
         Remove-Item -Path $buildfolder -Recurse -Force
         Write-Host "Build folder deleted successfully."
         Write-Host "Downloading and unzipping archive to '$zipFilePath'." -ForegroundColor White
@@ -169,6 +169,27 @@ try {
 # // windowsfeatures (Windows Sandbox, .NET Framework)
 # // Taskbar (Set-BoxstarterTaskbarOptions)
 
+## WINDOWS UPDATES ##
+# Install the Windows Update module
 Install-Module PSWindowsUpdate
-Add-WUServiceManager -MicrosoftUpdate
-Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
+# Import the Windows Update module
+Import-Module PSWindowsUpdate
+
+#Add-WUServiceManager -MicrosoftUpdate
+# Check for updates
+Get-WindowsUpdate -AcceptAll -Install
+#Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
+
+Write-Host "Almost Complete - Let's reboot to make it stick." -ForegroundColor White
+
+function Restart-PC{
+    ##########
+    # Restart
+    ##########
+    Write-Host
+    Write-Host "Press any key to restart your system..." -ForegroundColor Black -BackgroundColor White
+    $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    Write-Host "Restarting..."
+    Restart-Computer
+}
+Restart-PC
