@@ -29,7 +29,6 @@ $applicationList = @(
 	"Microsoft.GetHelp"
 	"Microsoft.Messaging"
 	"Microsoft.MicrosoftOfficeHub"
-	"Microsoft.MicrosoftSolitaireCollection"
 	"*Minecraft*"
 	"Microsoft.Office.OneNote"
 	"Microsoft.OneConnect"
