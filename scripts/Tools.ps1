@@ -6,7 +6,7 @@ winget install -e --id Google.Chrome
 
 # choco install -y firefox
 winget install -e --id Mozilla.Firefox
-winget install -e --id Mozilla.Firefox.DeveloperEdition
+#winget install -e --id Mozilla.Firefox.DeveloperEdition
 
 # ---------------------------------------------- #
 # Common tools  --------------------------------- #
@@ -25,7 +25,7 @@ winget install -e --id dotPDN.PaintDotNet
 #winget install -e -h --id Obsidian.Obsidian
 #winget install -e -h --id JohnMacFarlane.Pandoc
 #winget install -e -h --id Microsoft.Whiteboard -s msstore
-winget install -e -h --id Microsoft.PowerToys # settings to sync
+#winget install -e -h --id Microsoft.PowerToys # settings to sync
 # Already  installed by default
 # winget install -e -h --id Microsoft.Teams
 # winget install -e -h --id Microsoft.Office
@@ -97,13 +97,13 @@ winget install -e --id GitHub.GitHubDesktop
 # ---------------------------------------------- #
 # Azure tools  --------------------------------- #
 # ---------------------------------------------- #
-winget install -e -h --id Microsoft.AzureCLI
+#winget install -e -h --id Microsoft.AzureCLI
 #winget install -e -h --id Microsoft.AzureCosmosEmulator
-winget install -e -h --id Microsoft.AzureDataStudio
+#winget install -e -h --id Microsoft.AzureDataStudio
 #winget install -e -h --id Microsoft.azure-iot-explorer
-winget install -e -h --id Microsoft.AzureStorageExplorer
+#winget install -e -h --id Microsoft.AzureStorageExplorer
 #winget install -e -h --id Pulumi.Pulumi
-winget install -e -h --id Microsoft.AzureFunctionsCoreTools
+#winget install -e -h --id Microsoft.AzureFunctionsCoreTools
 # Azurite can be installed through vscode extension or as a global npm package
 # pnpm add -g azurite
 
