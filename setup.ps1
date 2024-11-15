@@ -57,9 +57,11 @@ catch {
 try {
     # Check if the source file exists
     $chocofolder = "C:\ProgramData\chocolatey"
+    $chococachefolder = "C:\ProgramData\ChocolateyHttpCache"
     if (Test-Path -Path $chocofolder) {
         # If the file exists, delete the folder
         Remove-Item -Path $chocofolder -Force
+        Remove-Item -Path $chococachefolder -Force
         Write-Host "Chocolately deleted successfully."
         Write-Host "Reinstalling Chocolately..."
         try {
