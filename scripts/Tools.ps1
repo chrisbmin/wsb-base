@@ -40,28 +40,15 @@ winget install -e -h --id Microsoft.PowerToys # settings to sync
 winget install -e -h --id Microsoft.WindowsTerminal -s msstore
 # winget install -e -h --id Microsoft.WindowsTerminalPreview -s msstore
 
-# Removing here as this will be installed via PowerShell Profile Repo
-choco install -y cascadia-code-nerd-font
+# Windows terminal configuration
+#Remove-Item -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
+#New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Target "$env:USERPROFILE\wsb\config\windowsTerminal\settings.json"
+#cp "$env:USERPROFILE\wsb\config\windowsTerminal\icons\*" "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\RoamingState\"
+# Windows terminal preview configuration
+#Remove-Item -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json" -Force
+#New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json" -Target "$env:USERPROFILE\wsb\config\windowsTerminal\settings.json"
+#cp "$env:USERPROFILE\wsb\config\windowsTerminal\icons\*" "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\RoamingState\"
 
-# Chocolatey version is more up-o-date than winget version
-#choco install -y vscode
-winget install -e --id Microsoft.VisualStudioCode
-
-
-# ---------------------------------------------- #
-# Dev tools  ----------------------------------- #
-# ---------------------------------------------- #
-#winget install -e -h --id AndreasWascher.RepoZ
-#winget install -e -h --id CoreyButler.NVMforWindows
-#iwr https://get.pnpm.io/install.ps1 -useb | iex
-# iwr -useb get.scoop.sh | iex
-#winget install -e -h --id GitHub.cli
-
-# ---------------------------------------------- #
-# Prompt  -------------------------------------- #
-# ---------------------------------------------- #
-#pwsh -Command { Install-Module posh-git -Scope CurrentUser -Force}
-#winget install -e -h --id JanDeDobbeleer.OhMyPosh
 
 # ---------------------------------------------- #
 # PowerShell  ---------------------------------- #
@@ -70,6 +57,14 @@ winget install -e -h --id Microsoft.PowerShell
 # Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 #Remove-Item -Path "$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1" -Force
 #New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1" -Target "$env:USERPROFILE\wsb\config\powerShell\Microsoft.PowerShell_profile.ps1"
+
+# Chocolatey version is more up-o-date than winget version
+#choco install -y vscode
+winget install -e --id Microsoft.VisualStudioCode
+
+# Adding here - this might be installed via PowerShell Profile Repo
+choco install -y cascadia-code-nerd-font
+
 
 # ---------------------------------------------- #
 # NuShell  ---------------------------------- #
@@ -82,14 +77,22 @@ winget install -e -h --id Microsoft.PowerShell
 # config auto complete dotnet / nuke / ...
 
 
-# Windows terminal configuration
-#Remove-Item -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Force
-#New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json" -Target "$env:USERPROFILE\wsb\config\windowsTerminal\settings.json"
-#cp "$env:USERPROFILE\wsb\config\windowsTerminal\icons\*" "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\RoamingState\"
-# Windows terminal preview configuration
-#Remove-Item -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json" -Force
-#New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json" -Target "$env:USERPROFILE\wsb\config\windowsTerminal\settings.json"
-#cp "$env:USERPROFILE\wsb\config\windowsTerminal\icons\*" "$env:USERPROFILE\AppData\Local\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\RoamingState\"
+# ---------------------------------------------- #
+# Dev tools  ----------------------------------- #
+# ---------------------------------------------- #
+#winget install -e -h --id AndreasWascher.RepoZ
+#winget install -e -h --id CoreyButler.NVMforWindows
+#iwr https://get.pnpm.io/install.ps1 -useb | iex
+# iwr -useb get.scoop.sh | iex
+#winget install -e -h --id GitHub.cli
+winget install -e --id GitHub.GitHubDesktop
+
+# ---------------------------------------------- #
+# Prompt  -------------------------------------- #
+# ---------------------------------------------- #
+#pwsh -Command { Install-Module posh-git -Scope CurrentUser -Force}
+#winget install -e -h --id JanDeDobbeleer.OhMyPosh
+
 
 # ---------------------------------------------- #
 # Azure tools  --------------------------------- #
