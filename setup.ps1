@@ -30,27 +30,62 @@ if (-not (Test-InternetConnection)) {
     break
 }
   
-# Download Install Archive / Unpack into build folder.    
+# Download Install Archive / Unpack into build folder.  
 try {
+    # Check if the source file exists
     $builderUrl = "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip"
-    $downloadfolder = "$env:systemdrive\build"
+    $buildfolder = "$env:systemdrive\build"
     $zipFilePath = "$env:TEMP\main.zip"
     $extractPath = "$env:systemdrive\build"
-    Write-Host "Downloading and unzipping archive to '$zipFilePath'." -ForegroundColor White
-    $webClient = New-Object System.Net.WebClient
+    if (Test-Path -Path $buildfolder) {
+        # If the file exists, delete the folder
+        
+        Remove-Item -Path $buildfolder -Recurse -Force
+        Write-Host "Build folder deleted successfully."
+        Write-Host "Downloading and unzipping archive to '$zipFilePath'." -ForegroundColor White
+        try {
+            $webClient = New-Object System.Net.WebClient
             $webClient.DownloadFileAsync((New-Object System.Uri($builderUrl)), $zipFilePath)
 
             while ($webClient.IsBusy) {
                 Start-Sleep -Seconds 2
             } 
-    #Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
-    #Expand-Archive -Path "$downloadfolder\main.zip" -DestinationPath $downloadfolder -Force
-    Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
-    Remove-Item -Path $zipFilePath -Force
+            #Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
+            #Expand-Archive -Path "$downloadfolder\main.zip" -DestinationPath $downloadfolder -Force
+            Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
+            Remove-Item -Path $zipFilePath -Force
+        }
+        catch {
+            Write-Error "Failed to download archive. Error: $_"
+        }
+        Write-Host "Archive Downloaded successfully!"
+    } else {
+        Write-Host "Chocolately Profile does not exist @ [$chocofolder]. Installing..."
+        try {
+            $webClient = New-Object System.Net.WebClient
+            $webClient.DownloadFileAsync((New-Object System.Uri($builderUrl)), $zipFilePath)
+
+            while ($webClient.IsBusy) {
+                Start-Sleep -Seconds 2
+            } 
+            #Invoke-WebRequest -Uri "https://github.com/chrisrbmn/wsb-v2/archive/refs/heads/main.zip" -OutFile "$downloadfolder\main.zip"
+            #Expand-Archive -Path "$downloadfolder\main.zip" -DestinationPath $downloadfolder -Force
+            Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
+            Remove-Item -Path $zipFilePath -Force
+        }
+        catch {
+            Write-Error "Failed to download archive. Error: $_"
+        }
+        Write-Host "Archive Downloaded successfully!"
+    }
+    
 }
 catch {
     Write-Error "Failed to download archive. Error: $_"
 }
+
+
+###
 
 # Choco install
 # Check to see if directories are already in place, and if yes, delete everything, and reinstall.
