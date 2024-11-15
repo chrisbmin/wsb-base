@@ -61,8 +61,8 @@ try {
     if (Test-Path -Path $chocofolder) {
         # If the file exists, delete the folder
         
-        Remove-Item -Path $chocofolder -Force
-        Remove-Item -Path $chococachefolder -Force
+        Remove-Item -Path $chocofolder -Recurse -Force
+        Remove-Item -Path $chococachefolder -Recurse -Force
         Write-Host "Chocolately deleted successfully."
         Write-Host "Reinstalling Chocolately..."
         try {
