@@ -81,8 +81,10 @@ try {
 #. "$env:systemdrive\build\wsb-v2-main\scripts\InstallWinget.ps1"
 . "$env:systemdrive\build\wsb-v2-main\scripts\FileExplorerSettings.ps1"
 . "$env:systemdrive\build\wsb-v2-main\scripts\RemoveDefaultApps.ps1"
-. "$env:systemdrive\build\wsb-v2-main\scripts\Tools.ps1"
 . "$env:systemdrive\build\wsb-v2-main\scripts\IDEs.ps1"
+. "$env:systemdrive\build\wsb-v2-main\scripts\Tools.ps1"
+. "$env:systemdrive\build\wsb-v2-main\scripts\SystemSettings.ps1"
+
 
 # TODO: install WSL2 / Ubuntu
 # choco install -y Microsoft-Windows-Subsystem-Linux -source windowsfeatures
