@@ -53,7 +53,7 @@ catch {
 }
 
 # Choco install
-# Check to see if directories are already in place, and if yes, delete everything, and reinstall everything
+# Check to see if directories are already in place, and if yes, delete everything, and reinstall.
 try {
     # Check if the source file exists
     $chocofolder = "C:\ProgramData\chocolatey"
