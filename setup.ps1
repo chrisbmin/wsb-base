@@ -4,6 +4,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     break
 }
 
+Write-Host "Setting Powershell Execution Policy to 'RemoteSigned'."
 Set-ExecutionPolicy remotesigned
 
 # Function to test internet connectivity
