@@ -213,16 +213,16 @@ if ($updates.Count -gt 0) {
 #Get-WindowsUpdate -AcceptAll -Install
 #Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 
-Write-Host "Almost Complete - Let's reboot to make it stick." -ForegroundColor White
+Write-Host "Almost Complete - Should we reboot?" -ForegroundColor White
 
-#function Restart-PC{
+function Restart-PC{
     ##########
     # Restart
     ##########
-#    Write-Host
-#    Write-Host "Press any key to restart your system..." -ForegroundColor Black -BackgroundColor White
-#    $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-#    Write-Host "Restarting..."
-#    Restart-Computer
-#}
-#Restart-PC
+    Write-Host
+    Write-Host "Press any key to restart your system - or close this window to skip..." -ForegroundColor Black -BackgroundColor White
+    $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    Write-Host "Restarting..."
+    Restart-Computer
+}
+Restart-PC
