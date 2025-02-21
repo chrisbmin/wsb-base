@@ -147,6 +147,7 @@ try {
 . "$env:systemdrive\build\wsb-v2-main\scripts\RemoveDefaultApps.ps1"
 . "$env:systemdrive\build\wsb-v2-main\scripts\Tools.ps1"
 . "$env:systemdrive\build\wsb-v2-main\scripts\SystemSettings.ps1"
+. "$env:systemdrive\build\wsb-v2-main\scripts\optionalprograms.ps1"
 
 
 # TODO: install WSL2 / Ubuntu
