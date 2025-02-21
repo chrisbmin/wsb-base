@@ -188,9 +188,6 @@ if ($updates.Count -gt 0) {
     Write-Output "No updates were installed."
 }
 
-
-
-
 # Install the Windows Update module
 #Install-Module PSWindowsUpdate
 

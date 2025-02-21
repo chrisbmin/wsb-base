@@ -14,18 +14,23 @@ winget install -e --id Mozilla.Firefox
 
 #choco install -y screentogif
 #choco install -y zoomit
+
 # choco install -y 7zip
 winget install -e --id 7zip.7zip 
+
+# choco install -y ShareX
+winget install -e --id ShareX.ShareX 
 
 #choco install -y paint.net
 winget install -e --id dotPDN.PaintDotNet
 
 #winget install -e -h --id WinDirStat.WinDirStat
+winget install -e -h --id AntibodySoftware.WizTree
 #winget install -e -h --id Microsoft.BingWallpaper
 #winget install -e -h --id Obsidian.Obsidian
 #winget install -e -h --id JohnMacFarlane.Pandoc
 #winget install -e -h --id Microsoft.Whiteboard -s msstore
-#winget install -e -h --id Microsoft.PowerToys # settings to sync
+winget install -e -h --id Microsoft.PowerToys # settings to sync
 # Already  installed by default
 # winget install -e -h --id Microsoft.Teams
 # winget install -e -h --id Microsoft.Office
@@ -108,10 +113,3 @@ winget install -e --id GitHub.GitHubDesktop
 # pnpm add -g azurite
 
 
-
-# ---------------------------------------------- #
-# Blog tools  ---------------------------------- #
-# ---------------------------------------------- #
-# wyam
-# netlify
-# statiq
