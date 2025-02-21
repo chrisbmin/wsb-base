@@ -144,10 +144,10 @@ try {
 #. "$env:systemdrive\build\wsb-v2-main\scripts\InstallWinget.ps1"
 #. "$env:systemdrive\build\wsb-v2-main\scripts\FileExplorerSettings.ps1"
 #. "$env:systemdrive\build\wsb-v2-main\scripts\IDEs.ps1"
-. "$env:systemdrive\build\wsb-v2-main\scripts\RemoveDefaultApps.ps1"
-. "$env:systemdrive\build\wsb-v2-main\scripts\Tools.ps1"
-. "$env:systemdrive\build\wsb-v2-main\scripts\SystemSettings.ps1"
-. "$env:systemdrive\build\wsb-v2-main\scripts\optionalprograms.ps1"
+. "$env:systemdrive\build\wsb-base-main\scripts\RemoveDefaultApps.ps1"
+. "$env:systemdrive\build\wsb-base-main\scripts\Tools.ps1"
+. "$env:systemdrive\build\wsb-base-main\scripts\SystemSettings.ps1"
+. "$env:systemdrive\build\wsb-base-main\scripts\optionalprograms.ps1"
 
 
 # TODO: install WSL2 / Ubuntu
