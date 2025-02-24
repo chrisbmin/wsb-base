@@ -12,7 +12,8 @@ function show-menu {
         Write-Host "3: Install AzureStorageExplorer"
         Write-Host "4: Mozilla Firefox Developer Edition"
         Write-Host "5: Install OhMyPosh"
-        Write-Host "6: Run Windows Utility"
+        Write-Host "6: Install Micorosft PowerToys"
+        Write-Host "7: Run ChrisTitus Windows Utility"
         Write-Host "Q: Quit"
         Write-Host "================ $title ================"
 }
@@ -35,9 +36,12 @@ while($true){
             winget install -e -h --id Mozilla.FirefoxDeveloperEdition
         }
         '5' {
-            winget install -e -h --id JanDeDobbeleer.OhMyPosh
+            winget install -e -h --id Microsoft.PowerToys # settings to sync
         }
         '6' {
+            winget install -e -h --id JanDeDobbeleer.OhMyPosh
+        }
+        '7' {
             irm "https://christitus.com/win" | iex
         }
         'q' {
