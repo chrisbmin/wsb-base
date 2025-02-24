@@ -30,7 +30,7 @@ winget install -e -h --id AntibodySoftware.WizTree
 #winget install -e -h --id Obsidian.Obsidian
 #winget install -e -h --id JohnMacFarlane.Pandoc
 #winget install -e -h --id Microsoft.Whiteboard -s msstore
-winget install -e -h --id Microsoft.PowerToys # settings to sync
+# winget install -e -h --id Microsoft.PowerToys # settings to sync
 # Already  installed by default
 # winget install -e -h --id Microsoft.Teams
 # winget install -e -h --id Microsoft.Office
