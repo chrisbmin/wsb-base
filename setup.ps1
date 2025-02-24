@@ -148,7 +148,7 @@ try {
 . "$env:systemdrive\build\wsb-base-main\scripts\Tools.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\SystemSettings.ps1"
 # Launching a sperate elevated PowerShell window to install optional programs.
-Start-Process powershell -Verb RunAs -ArgumentList "-NoExit", "-File", . "$env:systemdrive\build\wsb-base-main\scripts\optionalprograms.ps1"
+# Start-Process powershell -Verb RunAs -ArgumentList "-NoExit", "-File", . "$env:systemdrive\build\wsb-base-main\scripts\optionalprograms.ps1"
 # bla bla bla
 
 # TODO: install WSL2 / Ubuntu
