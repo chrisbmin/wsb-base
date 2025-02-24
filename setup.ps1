@@ -23,16 +23,7 @@ if (-not (Test-InternetConnection)) {
     break
 }
 
-#    $buildfolder = "$env:systemdrive\build"
-#    if (!(Test-Path -Path $buildfolder)) {
-#        Write-Host "Build Folder '$buildfolder' does not exist." -f Yellow; Write-Host "`n Creating it..." -f Green;
-#        New-Item -ItemType Directory -Path $buildfolder
-#    } else {
-#        Write-Host "Build folder '$buildfolder' existed. Continuing..." -ForegroundColor White 
-#        #Remove-Item -Path $buildfolder -Recurse -Force
-#    }
 
-  
 # Download/Install Build Archive / Unpack into build folder.  
 try {
     # Check if the source file exists
@@ -141,27 +132,11 @@ try {
 
 
   #--- Setting up Windows ---
-#. "$env:systemdrive\build\wsb-v2-main\scripts\InstallWinget.ps1"
-#. "$env:systemdrive\build\wsb-v2-main\scripts\FileExplorerSettings.ps1"
-#. "$env:systemdrive\build\wsb-v2-main\scripts\IDEs.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\RemoveDefaultApps.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\Tools.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\SystemSettings.ps1"
-# Launching a sperate elevated PowerShell window to install optional programs.
-# Start-Process powershell -Verb RunAs -ArgumentList "-NoExit", "-File", . "$env:systemdrive\build\wsb-base-main\scripts\optionalprograms.ps1"
-# bla bla bla
 
-# TODO: install WSL2 / Ubuntu
-# choco install -y Microsoft-Windows-Subsystem-Linux -source windowsfeatures
-# choco install -y VirtualMachinePlatform -source windowsfeatures
-# wsl --set-default-version 2
-# choco install wsl2 --params "/Version:2 /Retry:true"
 
-# TODO: Docker
-# winget install -e -h --id suse.RancherDesktop
-
-# // windowsfeatures (Windows Sandbox, .NET Framework)
-# // Taskbar (Set-BoxstarterTaskbarOptions)
 
 ## WINDOWS UPDATES ##
 # Install the PSWindowsUpdate module if not already installed
@@ -189,17 +164,6 @@ if ($updates.Count -gt 0) {
 } else {
     Write-Output "No updates were installed."
 }
-
-# Install the Windows Update module
-#Install-Module PSWindowsUpdate
-
-# Import the Windows Update module
-#Import-Module -Name PSWindowsUpdate -Force -ErrorAction Stop
-
-#Add-WUServiceManager -MicrosoftUpdate
-# Check for updates
-#Get-WindowsUpdate -AcceptAll -Install
-#Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 
 Write-Host "Almost Complete - Should we reboot?" -ForegroundColor White
 
