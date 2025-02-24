@@ -18,11 +18,11 @@ function Test-InternetConnection {
         return $false
     }
 }
+
 # Check for internet connectivity before proceeding
 if (-not (Test-InternetConnection)) {
     break
 }
-
 
 # Download/Install Build Archive / Unpack into build folder.  
 try {
@@ -74,9 +74,7 @@ catch {
     Write-Error "Failed to download archive. Error: $_"
 }
 
-
 ###
-
 # Choco install
 # Check to see if directories are already in place, and if yes, delete everything, and reinstall.
 try {
@@ -133,8 +131,9 @@ try {
 
   #--- Setting up Windows ---
 . "$env:systemdrive\build\wsb-base-main\scripts\RemoveDefaultApps.ps1"
-. "$env:systemdrive\build\wsb-base-main\scripts\Tools.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\SystemSettings.ps1"
+. "$env:systemdrive\build\wsb-base-main\scripts\InstallBaseTools.ps1"
+
 
 
 
