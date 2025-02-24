@@ -1,3 +1,7 @@
+# These are the base applications I like to install regardless of the machine I'm working on.
+# Other optional applications are installed based on the machine's purpose.
+# Menu's to the optional programs will be added in the future. Check InstallOptionalTools.ps1 for more information.
+
 # ---------------------------------------------- #
 # Browsers  ------------------------------------ #
 # ---------------------------------------------- #
@@ -27,11 +31,20 @@ winget install -e --id dotPDN.PaintDotNet
 #winget install -e -h --id WinDirStat.WinDirStat
 winget install -e -h --id AntibodySoftware.WizTree
 #winget install -e -h --id Microsoft.BingWallpaper
+
+# https://obsidian.md/
 #winget install -e -h --id Obsidian.Obsidian
+
+# https://pandoc.org/index.html
 #winget install -e -h --id JohnMacFarlane.Pandoc
+
+# https://www.microsoft.com/en-us/microsoft-365/microsoft-whiteboard/digital-whiteboard-app
 #winget install -e -h --id Microsoft.Whiteboard -s msstore
+
+# Moved to Optional Programs
 # winget install -e -h --id Microsoft.PowerToys # settings to sync
-# Already  installed by default
+
+# Move the below to optional installed programs
 # winget install -e -h --id Microsoft.Teams
 # winget install -e -h --id Microsoft.Office
 #winget install -e -h --id Logitech.Options
@@ -68,18 +81,9 @@ winget install -e -h --id Microsoft.PowerShell
 winget install -e --id Microsoft.VisualStudioCode
 
 # Adding here - this might be installed via PowerShell Profile Repo
-choco install -y cascadia-code-nerd-font
+# Add to optional programs
+# choco install -y cascadia-code-nerd-font
 
-
-# ---------------------------------------------- #
-# NuShell  ---------------------------------- #
-# ---------------------------------------------- #
-#winget install -e -h --id Nushell.Nushell
-# saves an initialization script to ~/.oh-my-posh.nu that will be used in Nushell config file
-#oh-my-posh init nu --config "$env:USERPROFILE\wsb\config\prompt\.oh-my-posh.omp.json"
-#Remove-Item -Path "$env:USERPROFILE\AppData\Roaming\nushell\config.nu" -Force
-#New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Roaming\nushell\config.nu" -Target "$env:USERPROFILE\wsb\config\nu\config.nu"
-# config auto complete dotnet / nuke / ...
 
 
 # ---------------------------------------------- #
