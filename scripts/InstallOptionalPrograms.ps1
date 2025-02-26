@@ -58,3 +58,55 @@ while($true){
     
 }
 main
+#
+# Combined Notes from other code below - to be merged above.
+#
+#winget install -e --id Mozilla.Firefox.DeveloperEdition
+#winget install -e -h --id Microsoft.BingWallpaper
+
+# https://obsidian.md/
+#winget install -e -h --id Obsidian.Obsidian
+
+# https://pandoc.org/index.html
+#winget install -e -h --id JohnMacFarlane.Pandoc
+
+# https://www.microsoft.com/en-us/microsoft-365/microsoft-whiteboard/digital-whiteboard-app
+#winget install -e -h --id Microsoft.Whiteboard -s msstore
+
+# Moved to Optional Programs
+# winget install -e -h --id Microsoft.PowerToys # settings to sync
+
+# Move the below to optional installed programs
+# winget install -e -h --id Microsoft.Teams
+# winget install -e -h --id Microsoft.Office
+#winget install -e -h --id Logitech.Options
+#winget install -e -h --id Dell.DisplayManager
+
+# Adding here - this might be installed via PowerShell Profile Repo
+# Add to optional programs
+# choco install -y cascadia-code-nerd-font
+
+# https://github.com/awaescher/RepoZ
+#winget install -e -h --id AndreasWascher.RepoZ
+
+#iwr https://get.pnpm.io/install.ps1 -useb | iex
+
+# ---------------------------------------------- #
+# Prompt  -------------------------------------- #
+# ---------------------------------------------- #
+#pwsh -Command { Install-Module posh-git -Scope CurrentUser -Force}
+#winget install -e -h --id JanDeDobbeleer.OhMyPosh
+
+
+# ---------------------------------------------- #
+# Azure tools  --------------------------------- #
+# ---------------------------------------------- #
+#winget install -e -h --id Microsoft.AzureCLI
+#winget install -e -h --id Microsoft.AzureCosmosEmulator
+#winget install -e -h --id Microsoft.AzureDataStudio
+#winget install -e -h --id Microsoft.azure-iot-explorer
+#winget install -e -h --id Microsoft.AzureStorageExplorer
+#winget install -e -h --id Pulumi.Pulumi
+#winget install -e -h --id Microsoft.AzureFunctionsCoreTools
+# Azurite can be installed through vscode extension or as a global npm package
+# pnpm add -g azurite
