@@ -1,6 +1,6 @@
 # My personal WorkStation Builder
 
-Contains everything to setup my Windows Engineer desktop environment.
+Contains everything to setup the base tools for a Windows desktop environment. Optional tools will be included via the InstallOptionalPrograms.ps1 script.
 
 > Inpired by [Microsoft/windows-dev-box-setup-scripts](https://github.com/Microsoft/windows-dev-box-setup-scripts) and other repositories to setup their developer machine.
 
