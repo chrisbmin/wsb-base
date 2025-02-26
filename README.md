@@ -1,4 +1,4 @@
-# My personal WorkStation Builder
+# My personal WorkStation Builder (WSB)
 
 Contains everything to setup the base tools for a Windows desktop environment. Optional tools will be included via the InstallOptionalPrograms.ps1 script.
 
