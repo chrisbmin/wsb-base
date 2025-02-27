@@ -7,6 +7,8 @@ function ReclaimWindows10 {
 
 
     # Massive deployment section. There are stacks of customization options here. Un-hash the ones your want to apply.
+    # Added a few links to reference what many of these services do, to aid in decision making.
+    # https://www.freshtechtips.com/2019/04/disable-unnecessary-services-in-windows.html
     ##########
     # Privacy Settings
     ##########
@@ -122,6 +124,10 @@ function ReclaimWindows10 {
     # icacls $autoLoggerDir /grant:r SYSTEM:`(OI`)`(CI`)F | Out-Null
 
     # Stop and disable Diagnostics Tracking Service
+    # This service collects event-driven usage pattern data. 
+    # This data is sent back to Microsoft to assess and analyze how the users are using the Windows system on a daily basis. 
+    # This assessment is used to improve the Windows platform.
+    # https://support.microsoft.com/en-us/topic/update-for-customer-experience-and-diagnostic-telemetry-0b4f29c3-8361-b748-f862-7ecedbc57cbf
     Write-Host "Stopping and disabling Diagnostics Tracking Service..."
     Stop-Service "DiagTrack"
     Set-Service "DiagTrack" -StartupType Disabled
@@ -131,6 +137,7 @@ function ReclaimWindows10 {
     # Start-Service "DiagTrack"
 
     # Stop and disable WAP Push Service
+    # A service associated with data collection and telemetry
     Write-Host "Stopping and disabling WAP Push Service..."
     Stop-Service "dmwappushservice"
     Set-Service "dmwappushservice" -StartupType Disabled
@@ -581,7 +588,7 @@ function ReclaimWindows10 {
 
 #InstallChoco
 #InstallApps
-#ReclaimWindows10
+ReclaimWindows10
 #LayoutDesign
 #ApplyDefaultApps
 #PowerSettings
