@@ -25,7 +25,8 @@ winget install -e --accept-source-agreements --accept-package-agreements --id Vi
 winget install -e --accept-source-agreements --accept-package-agreements --id WinMerge.WinMerge
 winget install -e --accept-source-agreements --accept-package-agreements --id dotPDN.PaintDotNet
 winget install -e --accept-source-agreements --accept-package-agreements --id Notepad++.Notepad++
-winget install -e --accept-source-agreements --accept-package-agreements -h --id JackieLiu.NotepadsApp
+# NotepadsApp is failing install testing on Win10. Going to comment out for now.
+#winget install -e --accept-source-agreements --accept-package-agreements -h --id JackieLiu.NotepadsApp
 winget install -e --accept-source-agreements --accept-package-agreements -h --id AntibodySoftware.WizTree
 winget install -e --accept-source-agreements --accept-package-agreements -h --id WinSCP.WinSCP
 
