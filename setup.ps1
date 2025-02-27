@@ -136,8 +136,6 @@ try {
 . "$env:systemdrive\build\wsb-base-main\scripts\InstallBaseTools.ps1"
 
 
-
-
 ## WINDOWS UPDATES ##
 # Install the PSWindowsUpdate module if not already installed
 if (-not (Get-Module -Name PSWindowsUpdate -ListAvailable)) {
