@@ -21,6 +21,7 @@ function Test-InternetConnection {
 
 # Check for internet connectivity before proceeding
 if (-not (Test-InternetConnection)) {
+    Write-Host "No internet detected. Exiting script."
     break
 }
 
@@ -129,7 +130,7 @@ try {
   Repair-WinGetPackageManager
 
 
-  #--- Setting up Windows ---
+  #--- Let Set up Windows ---
 . "$env:systemdrive\build\wsb-base-main\scripts\RemoveDefaultApps.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\SystemSettings.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\InstallBaseTools.ps1"
