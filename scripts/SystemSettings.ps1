@@ -1,9 +1,10 @@
-function ReclaimWindows10 {
+# I don't think this function is needed anymore as the context of PowerShell should already be "Run as Administrator".
+#function ReclaimWindows10 {
     # Ask for elevated permissions if required
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-        Exit
-    }
+#    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+#        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+#        Exit
+#    }
 
 
     # Massive deployment section. There are stacks of customization options here. Un-hash the ones your want to apply.
@@ -588,7 +589,7 @@ function ReclaimWindows10 {
 
 #InstallChoco
 #InstallApps
-ReclaimWindows10
+#ReclaimWindows10
 #LayoutDesign
 #ApplyDefaultApps
 #PowerSettings
