@@ -1,12 +1,3 @@
-# I don't think this function is needed anymore as the context of PowerShell should already be "Run as Administrator".
-#function ReclaimWindows10 {
-    # Ask for elevated permissions if required
-#    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-#        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-#        Exit
-#    }
-
-
     # Massive deployment section. There are stacks of customization options here. Un-hash the ones your want to apply.
     # Added a few links to reference what many of these services do, to aid in decision making.
     # https://www.freshtechtips.com/2019/04/disable-unnecessary-services-in-windows.html
@@ -548,18 +539,6 @@
 
     #}
 
-# Uploads a default layout to all NEW users that log into the system. Effects task bar and start menu
-#function LayoutDesign {
-#    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-#        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-#        Exit
-#    }
-#    Import-StartLayout -LayoutPath "$env:systemdrive\build\wsb-v2-main\config\LayoutModification.xml" -MountPath $env:SystemDrive\
-#    }
-    
-#function ApplyDefaultApps {
-#    dism /online /Import-DefaultAppAssociations:$env:systemdrive\build\wsb-v2-main\config\AppAssociations.xml
-#}
 
 # Custom power profile used for our customers. Ensures systems do not go to sleep.
 #function PowerSettings {
@@ -575,24 +554,3 @@
 #    POWERCFG -CHANGE -hibernate-timeout-ac 0
 #    POWERCFG -CHANGE -hibernate-timeout-dc 0
 #}
-
-#function RestartPC{
-    ##########
-    # Restart
-    ##########
-#    Write-Host
-#    Write-Host "Press any key to restart your system..." -ForegroundColor Black -BackgroundColor White
-#    $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-#    Write-Host "Restarting..."
-#    Restart-Computer
-#}
-
-#InstallChoco
-#InstallApps
-#ReclaimWindows10
-#LayoutDesign
-#ApplyDefaultApps
-#PowerSettings
-#Branding
-#SetPCName
-#RestartPC
