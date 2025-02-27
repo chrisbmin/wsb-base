@@ -1,6 +1,6 @@
 # These are the base applications I like to install regardless of the machine I'm working on.
-# Other optional applications are installed based on the machine's purpose.
-# Menu's to the optional programs will be added in the future. Check InstallOptionalTools.ps1 for more information.
+# Other optional applications can be installed based on the machine's purpose.
+# Menu's to the optional programs will be added in the future via optional tools scripts. Check InstallOptionalTools.ps1 for more information.
 
 # ---------------------------------------------- #
 # Browsers  ------------------------------------ #
@@ -32,7 +32,7 @@ winget install -e --accept-source-agreements --accept-package-agreements -h --id
 # Install FileZilla using Chocolatey because it's not available via winget
 choco install -y filezilla
 
-#Install ChatCPT using winget
+# Install ChatCPT using winget
 winget install -e --accept-source-agreements --accept-package-agreements --accept-package-agreements --id 9nt1r1c2hh7j
 
 # ---------------------------------------------- #
