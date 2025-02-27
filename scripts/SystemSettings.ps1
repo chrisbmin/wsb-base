@@ -546,7 +546,7 @@
     # }
     # Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
 
-    }
+    #}
 
 # Uploads a default layout to all NEW users that log into the system. Effects task bar and start menu
 #function LayoutDesign {
