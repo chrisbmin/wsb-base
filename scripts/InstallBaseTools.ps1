@@ -21,7 +21,7 @@ winget install -e --accept-source-agreements --accept-package-agreements --id 7z
 
 # choco install -y ShareX
 winget install -e --accept-source-agreements --accept-package-agreements --id ShareX.ShareX 
- 
+winget install -e --accept-source-agreements --accept-package-agreements --id VideoLAN.VLC 
 winget install -e --accept-source-agreements --accept-package-agreements --id WinMerge.WinMerge
 winget install -e --accept-source-agreements --accept-package-agreements --id dotPDN.PaintDotNet
 winget install -e --accept-source-agreements --accept-package-agreements --id Notepad++.Notepad++
