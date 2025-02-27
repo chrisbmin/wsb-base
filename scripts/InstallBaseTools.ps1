@@ -32,6 +32,7 @@ winget install -e --accept-source-agreements --accept-package-agreements -h --id
 # Install FileZilla using Chocolatey because it's not available via winget
 choco install -y filezilla
 
+#Install ChatCPT using winget
 winget install -e --accept-source-agreements --accept-package-agreements --accept-package-agreements --id 9nt1r1c2hh7j
 
 # ---------------------------------------------- #
