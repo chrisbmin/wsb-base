@@ -1,3 +1,39 @@
+Write-Host "===========================================================================================================================" -ForegroundColor White -BackgroundColor Black
+$text = "
+__        __         _    ____  _        _   _               ____        _ _     _              ___        ______  ______  
+\ \      / ___  _ __| | _/ ___|| |_ __ _| |_(_) ___  _ __   | __ ) _   _(_| | __| | ___ _ __   / \ \      / / ___|| __ \ \ 
+ \ \ /\ / / _ \| '__| |/ \___ \| __/ _` | __| |/ _ \| '_ \  |  _ \| | | | | |/ _` |/ _ | '__| | | \ \ /\ / /\___ \|  _ \| |
+  \ V  V | (_) | |  |   < ___) | || (_| | |_| | (_) | | | | | |_) | |_| | | | (_| |  __| |    | |  \ V  V /  ___) | |_) | |
+   \_/\_/ \___/|_|  |_|\_|____/ \__\__,_|\__|_|\___/|_| |_| |____/ \__,_|_|_|\__,_|\___|_|    | |   \_/\_/  |____/|____/| |
+                                                                                               \_\                     /_/ "
+for ($i=0; $i -lt $text.length; $i++) {
+    switch ($i % 6) {
+        0 { $c = "Yellow" }
+        2 { $c = "green" }
+        4 { $c = "blue" }
+        default { $c = "cyan" }
+    }
+write-host $text[$i] -NoNewline -ForegroundColor $c
+}
+Write-Host "`n"
+Write-Host "===========================================================================================================================" -ForegroundColor White -BackgroundColor Black
+Write-Host "`n" -ForegroundColor White -BackgroundColor Black
+Write-Host "Welcome to the WorkStation Builder (WSB) script." -ForegroundColor Black -BackgroundColor Yellow
+Write-Host "This script will automatically install Chocolatey and Winget along with a set of base applications." -ForegroundColor Black -BackgroundColor Yellow
+Write-Host "It will then debloat Windows and provide a few customizations." -ForegroundColor Black -BackgroundColor Yellow
+Write-Host "Finally, it will run Windows Update and inquire if you'd like to restart the system." -ForegroundColor Black -BackgroundColor Yellow
+Write-Host "`n"
+Write-Host "Press any key to continue building your system - or close this window to skip..." -ForegroundColor Black -BackgroundColor Yellow
+Write-Host "If you skip, you may rerun this script from the original URL" -ForegroundColor Black -BackgroundColor Yellow -NoNewline; Write-Host "'https://" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline; Write-Host "cbmn.link" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline; Write-Host "/wsb'. " -ForegroundColor Gray -BackgroundColor Yellow -NoNewline;
+Write-Host "`n" -ForegroundColor White -BackgroundColor Black
+Write-Host "===========================================================================================================================" -ForegroundColor White -BackgroundColor Black
+$key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+Write-Host "`n"
+Write-Host "`n"
+Write-Host "Yay! Starting the workstation build..." -ForegroundColor White -BackgroundColor Green
+Write-Host "`n"
+Write-Host "`n"
+
 # Ensure the script can run with elevated privileges
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
     Write-Warning "Please run this script as an Administrator!"
@@ -134,7 +170,6 @@ try {
 . "$env:systemdrive\build\wsb-base-main\scripts\RemoveDefaultApps.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\SystemSettings.ps1"
 . "$env:systemdrive\build\wsb-base-main\scripts\InstallBaseTools.ps1"
-
 
 ## WINDOWS UPDATES ##
 # Install the PSWindowsUpdate module if not already installed
