@@ -24,7 +24,7 @@ Write-Host "It will then debloat Windows and provide a few customizations." -For
 Write-Host "Finally, it will run Windows Update and inquire if you'd like to restart the system." -ForegroundColor Black -BackgroundColor Yellow
 Write-Host "`n"
 Write-Host "Press any key to continue building your system - or close this window to skip..." -ForegroundColor Black -BackgroundColor Yellow
-Write-Host "If you skip, you may rerun this script from the original URL" -ForegroundColor Black -BackgroundColor Yellow -NoNewline; Write-Host "'https://" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline; Write-Host "cbmn.link" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline; Write-Host "/wsb'. " -ForegroundColor Gray -BackgroundColor Yellow -NoNewline;
+Write-Host "If you skip, you may rerun this script from the original URL " -ForegroundColor Black -BackgroundColor Yellow -NoNewline; Write-Host "'https://" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline; Write-Host "cbmn.link" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline; Write-Host "/wsb'. " -ForegroundColor DarkGray -BackgroundColor Yellow -NoNewline;
 Write-Host "`n" -ForegroundColor White -BackgroundColor Black
 Write-Host "===========================================================================================================================" -ForegroundColor White -BackgroundColor Black
 $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
