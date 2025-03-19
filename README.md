@@ -28,6 +28,10 @@ I have chosen to mainly use 'winget' to install tools, except when packages were
 One of the firsts steps of the setup.ps1 script is to create a build folder on the C:\ drive and download this repository to it. It then uses the downloaded scripts in the repository and retrieve and configure the system.
 
 
+## What gets installed?
+
+
+
 ## Limitations
 
 The script does check if the build folder exists, and just continue's if detected. Essentially the tools will be simply re-installed.
@@ -36,7 +40,7 @@ May explore deleting the folder if it already exists, and recreating it. Also ma
 
 ## Using this repository 
 
-This repository contains the tools I like to use, my config files, my preferences... so you should not use it as-is. You can use it as it, take inspiration from it, fork this repository, modify the scripts and settings files with your needs, and use it to set up your development machine.  Just be aware that if you use it as it, you get everything I want.
+This repository contains the tools I like to use, my config files, my preferences... so you may not want to use it as-is. You can use it as it, take inspiration from it, fork this repository, modify the scripts and settings files with your needs, and use it to set up your development machine.  Just be aware that if you do use it as it, you get everything I want.
 
 Click on the copy icon below and paste into an elevated Powershell. If you have forked this repo, please make sure you have updated the link with the corresponding path to your forked version.
 
