@@ -1,213 +1,291 @@
-Write-Host "===========================================================================================================================" -ForegroundColor White -BackgroundColor Black
+<#
+.SYNOPSIS
+    WorkStation Builder (WSB) — automated Windows workstation setup.
+
+.DESCRIPTION
+    Installs package managers (winget, Chocolatey, Scoop), presents an
+    interactive tool selection menu, installs selected tools, applies
+    Windows settings, and runs Windows Update.
+
+.PARAMETER Profile
+    Pre-populate the tool menu with work or personal defaults.
+    Accepts: work, personal. If omitted, you will be prompted.
+
+.PARAMETER ToolboxPath
+    Path to your portable toolbox folder (added to user PATH).
+    Defaults to $env:USERPROFILE\toolbox if omitted.
+    Set to '' to skip toolbox setup.
+
+.PARAMETER SkipSettings
+    Skip Windows privacy/UI tweaks (SystemSettings.ps1).
+
+.PARAMETER SkipDebloat
+    Skip removal of default Windows apps (RemoveDefaultApps.ps1).
+
+.PARAMETER SkipUpdate
+    Skip Windows Update step at the end.
+
+.EXAMPLE
+    irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1" | iex
+
+.EXAMPLE
+    & ([scriptblock]::Create((irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1"))) -Profile work
+#>
+param(
+    [ValidateSet('work','personal')]
+    [string] $Profile      = '',
+    [string] $ToolboxPath  = "$env:USERPROFILE\toolbox",
+    [switch] $SkipSettings,
+    [switch] $SkipDebloat,
+    [switch] $SkipUpdate
+)
+
+# ── Banner ────────────────────────────────────────────────────────────────────
+
+Write-Host ("=" * 111) -ForegroundColor White -BackgroundColor Black
 $text = "
-__        __         _    ____  _        _   _               ____        _ _     _              ___        ______  ______  
-\ \      / ___  _ __| | _/ ___|| |_ __ _| |_(_) ___  _ __   | __ ) _   _(_| | __| | ___ _ __   / \ \      / / ___|| __ \ \ 
- \ \ /\ / / _ \| '__| |/ \___ \| __/ _` | __| |/ _ \| '_ \  |  _ \| | | | | |/ _` |/ _ | '__| | | \ \ /\ / /\___ \|  _ \| |
+__        __         _    ____  _        _   _               ____        _ _     _              ___        ______  ______
+\ \      / ___  _ __| | _/ ___|| |_ __ _| |_(_) ___  _ __   | __ ) _   _(_| | __| | ___ _ __   / \ \      / / ___|| __ \ \
+ \ \ /\ / / _ \| '__| |/ \___ \| __/ _  | __| |/ _ \| '_ \  |  _ \| | | | | |/ _  |/ _ | '__| | | \ \ /\ / /\___ \|  _ \| |
   \ V  V | (_) | |  |   < ___) | || (_| | |_| | (_) | | | | | |_) | |_| | | | (_| |  __| |    | |  \ V  V /  ___) | |_) | |
    \_/\_/ \___/|_|  |_|\_|____/ \__\__,_|\__|_|\___/|_| |_| |____/ \__,_|_|_|\__,_|\___|_|    | |   \_/\_/  |____/|____/| |
                                                                                                \_\                     /_/ "
-for ($i=0; $i -lt $text.length; $i++) {
+for ($i = 0; $i -lt $text.Length; $i++) {
     switch ($i % 6) {
-        0 { $c = "Yellow" }
-        2 { $c = "green" }
-        4 { $c = "blue" }
-        default { $c = "cyan" }
+        0 { $c = 'Yellow' }
+        2 { $c = 'Green'  }
+        4 { $c = 'Blue'   }
+        default { $c = 'Cyan' }
     }
-write-host $text[$i] -NoNewline -ForegroundColor $c
+    Write-Host $text[$i] -NoNewline -ForegroundColor $c
 }
 Write-Host "`n"
-Write-Host "===========================================================================================================================" -ForegroundColor White -BackgroundColor Black
-Write-Host "`n" -ForegroundColor White -BackgroundColor Black
-Write-Host "Welcome to the WorkStation Builder (WSB) script." -ForegroundColor Black -BackgroundColor Yellow
-Write-Host "This script will automatically install Chocolatey and Winget along with a set of base applications." -ForegroundColor Black -BackgroundColor Yellow
-Write-Host "It will then debloat Windows and provide a few customizations." -ForegroundColor Black -BackgroundColor Yellow
-Write-Host "Finally, it will run Windows Update and inquire if you'd like to restart the system." -ForegroundColor Black -BackgroundColor Yellow
-Write-Host "`n"
-Write-Host "Press any key to continue building your system - or close this window to skip..." -ForegroundColor Black -BackgroundColor Yellow
-Write-Host "If you skip, you may rerun this script from the original URL " -ForegroundColor Black -BackgroundColor Yellow -NoNewline; Write-Host "'https://" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline; Write-Host "cbmn.link" -ForegroundColor Blue -BackgroundColor Yellow -NoNewline; Write-Host "/wsb'. " -ForegroundColor DarkGray -BackgroundColor Yellow -NoNewline;
-Write-Host "`n" -ForegroundColor White -BackgroundColor Black
-Write-Host "===========================================================================================================================" -ForegroundColor White -BackgroundColor Black
-$key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-Write-Host "`n"
-Write-Host "`n"
-Write-Host "Yay! Starting the workstation build..." -ForegroundColor White -BackgroundColor Green
-Write-Host "`n"
-Write-Host "`n"
+Write-Host ("=" * 111) -ForegroundColor White -BackgroundColor Black
+Write-Host ""
 
-# Ensure the script can run with elevated privileges
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-    Write-Warning "Please run this script as an Administrator!"
-    break
+# ── Admin check ───────────────────────────────────────────────────────────────
+
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
+        [Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host ""
+    Write-Host "  [!] This script must be run as Administrator." -ForegroundColor Red
+    Write-Host "      Right-click PowerShell and select 'Run as administrator', then try again." -ForegroundColor DarkGray
+    Write-Host ""
+    exit 1
 }
 
-Write-Host "Setting Powershell Execution Policy to 'RemoteSigned'."
-Set-ExecutionPolicy remotesigned
+Set-ExecutionPolicy RemoteSigned -Scope Process -Force
 
-# Function to test internet connectivity
-function Test-InternetConnection {
+# ── Internet check ────────────────────────────────────────────────────────────
+
+Write-Host "  Checking internet connectivity..." -ForegroundColor DarkGray
+try {
+    $null = Test-Connection -ComputerName 8.8.8.8 -Count 1 -ErrorAction Stop
+    Write-Host "  Connected." -ForegroundColor Green
+} catch {
+    Write-Host "  [!] No internet connection detected. Please connect and re-run." -ForegroundColor Red
+    exit 1
+}
+
+# ── Profile selection ─────────────────────────────────────────────────────────
+
+# Support env var fallback for irm | iex usage (can't pass params to piped scripts)
+if ($Profile -eq '' -and $env:WSB_PROFILE -in 'work','personal') {
+    $Profile = $env:WSB_PROFILE
+}
+
+if ($Profile -eq '') {
+    Write-Host ""
+    Write-Host "  Select a profile to pre-populate tool defaults:" -ForegroundColor Yellow
+    Write-Host "    1  Work       (sysadmin stack: RSAT, Azure, Nutanix tools, admin utilities)" -ForegroundColor White
+    Write-Host "    2  Personal   (everyday tools: browsers, media, productivity)" -ForegroundColor White
+    Write-Host ""
+    do {
+        $choice = Read-Host "  Enter 1 or 2"
+    } until ($choice -in '1','2')
+    $Profile = if ($choice -eq '1') { 'work' } else { 'personal' }
+}
+
+Write-Host ""
+Write-Host "  Profile: " -ForegroundColor DarkGray -NoNewline
+Write-Host $Profile.ToUpper() -ForegroundColor Cyan
+
+# ── Toolbox path ──────────────────────────────────────────────────────────────
+
+Write-Host ""
+if ($ToolboxPath -ne '') {
+    Write-Host "  Toolbox folder: " -ForegroundColor DarkGray -NoNewline
+    Write-Host $ToolboxPath -ForegroundColor Cyan
+    Write-Host "  (Press Enter to accept, type a new path, or type SKIP to skip toolbox setup)" -ForegroundColor DarkGray
+    $tbInput = Read-Host "  >"
+    if ($tbInput.Trim().ToUpper() -eq 'SKIP') {
+        $ToolboxPath = ''
+        Write-Host "  Toolbox setup skipped." -ForegroundColor DarkGray
+    } elseif ($tbInput.Trim() -ne '') {
+        $ToolboxPath = $tbInput.Trim()
+    }
+}
+
+if ($ToolboxPath -ne '' -and -not (Test-Path $ToolboxPath)) {
+    Write-Host "  Creating toolbox folder: $ToolboxPath" -ForegroundColor DarkGray
+    New-Item -ItemType Directory -Path $ToolboxPath -Force | Out-Null
+}
+
+# ── Download / refresh build archive ─────────────────────────────────────────
+
+Write-Host ""
+Write-Host "  Downloading WSB repository..." -ForegroundColor DarkGray
+
+$buildRoot   = "$env:SystemDrive\build"
+$zipPath     = "$env:TEMP\wsb-base.zip"
+$repoUrl     = 'https://github.com/chrisbmin/wsb-base/archive/refs/heads/main.zip'
+$buildFolder = Join-Path $buildRoot 'wsb-base-main'
+
+if (Test-Path $buildRoot) {
+    Remove-Item $buildRoot -Recurse -Force
+}
+
+try {
+    $wc = New-Object System.Net.WebClient
+    $wc.DownloadFile($repoUrl, $zipPath)
+    Expand-Archive -Path $zipPath -DestinationPath $buildRoot -Force
+    Remove-Item $zipPath -Force
+    Write-Host "  Repository ready at $buildFolder" -ForegroundColor Green
+} catch {
+    Write-Host "  [!] Failed to download repository: $_" -ForegroundColor Red
+    exit 1
+}
+
+# ── Install package managers ──────────────────────────────────────────────────
+
+Write-Host ""
+Write-Host "  ================================================================" -ForegroundColor DarkGray
+Write-Host "  INSTALLING PACKAGE MANAGERS" -ForegroundColor Yellow
+Write-Host "  ================================================================" -ForegroundColor DarkGray
+
+# — Chocolatey —
+Write-Host ""
+Write-Host "  Chocolatey..." -ForegroundColor DarkGray
+if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
     try {
-        $testConnection = Test-Connection -ComputerName www.google.com -Count 1 -ErrorAction Stop
-        return $true
-    }
-    catch {
-        Write-Warning "Internet connection is required but not available. Please check your connection."
-        return $false
-    }
-}
-
-# Check for internet connectivity before proceeding
-if (-not (Test-InternetConnection)) {
-    Write-Host "No internet detected. Exiting script."
-    break
-}
-
-# Download/Install Build Archive / Unpack into build folder.  
-try {
-    # Check if the source file exists
-    $builderUrl = "https://github.com/chrisrbmn/wsb-base/archive/refs/heads/main.zip"
-    $buildfolder = "$env:systemdrive\build"
-    $zipFilePath = "$env:TEMP\main.zip"
-    $extractPath = "$env:systemdrive\build"
-    if (Test-Path -Path $buildfolder) {
-        # If the file exists, delete the folder and start over.
-        Write-Host "Build folder '$buildfolder' is present. Deleting the folder and starting fresh..." -ForegroundColor White
-        Remove-Item -Path $buildfolder -Recurse -Force
-        Write-Host "Build folder deleted successfully."
-        Write-Host "Downloading and unzipping archive to '$zipFilePath'." -ForegroundColor White
-        try {
-            $webClient = New-Object System.Net.WebClient
-            $webClient.DownloadFileAsync((New-Object System.Uri($builderUrl)), $zipFilePath)
-
-            while ($webClient.IsBusy) {
-                Start-Sleep -Seconds 2
-            } 
-            Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
-            Remove-Item -Path $zipFilePath -Force
-        }
-        catch {
-            Write-Error "Failed to download archive. Error: $_"
-        }
-        Write-Host "Archive Downloaded successfully!"
-    } else {
-        Write-Host "Build Folder does not exist @ [$buildfolder]. Downloading Files..."
-        try {
-            $webClient = New-Object System.Net.WebClient
-            $webClient.DownloadFileAsync((New-Object System.Uri($builderUrl)), $zipFilePath)
-
-            while ($webClient.IsBusy) {
-                Start-Sleep -Seconds 2
-            } 
-            Expand-Archive -Path $zipFilePath -DestinationPath $extractPath -Force
-            Remove-Item -Path $zipFilePath -Force
-        }
-        catch {
-            Write-Error "Failed to download archive. Error: $_"
-        }
-        Write-Host "Archive Downloaded successfully!"
-    }
-    
-}
-catch {
-    Write-Error "Failed to download archive. Error: $_"
-}
-
-###
-# Choco install
-# Check to see if directories are already in place, and if yes, delete everything, and reinstall.
-try {
-    # Check if the source file exists
-    $chocofolder = "C:\ProgramData\chocolatey"
-    $chococachefolder = "C:\ProgramData\ChocolateyHttpCache"
-    if (Test-Path -Path $chocofolder) {
-        # If the file exists, delete the folder
-        
-        Remove-Item -Path $chocofolder -Recurse -Force
-        Remove-Item -Path $chococachefolder -Recurse -Force
-        Write-Host "Chocolately deleted successfully."
-        Write-Host "Reinstalling Chocolately..."
-        try {
-            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-        }
-        catch {
-            Write-Error "Failed to install Chocolatey. Error: $_"
-        }
-        Write-Host "Chocolately installed successfully!"
-    } else {
-        Write-Host "Chocolately Profile does not exist @ [$chocofolder]. Installing..."
-        try {
-            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-        }
-        catch {
-            Write-Error "Failed to install Chocolatey. Error: $_"
-        }
-        Write-Host "Chocolately installed successfully!"
-    }
-    
-    }
-    catch {
-        Write-Error "Failed to install Chocolatey. Error: $_"
-    }
-###
-
-# Winget install
-try {
-    Install-PackageProvider -Name NuGet -Force | Out-Null
-    Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
-  } catch {
-    throw "Microsoft.Winget.Client was not installed successfully"
-  } finally {
-    # Check to be sure it acutally installed
-    if (-not(Get-Module -ListAvailable -Name Microsoft.Winget.Client)) {
-      throw "Microsoft.Winget.Client was not found. Check that the Windows Package Manager PowerShell module was installed correctly."
-    } else {
-        Write-Host "Winget Client was installed successfully!" -ForegroundColor White
-    }
-  }
-  Repair-WinGetPackageManager
-
-
-  #--- Let Set up Windows ---
-. "$env:systemdrive\build\wsb-base-main\scripts\RemoveDefaultApps.ps1"
-. "$env:systemdrive\build\wsb-base-main\scripts\SystemSettings.ps1"
-. "$env:systemdrive\build\wsb-base-main\scripts\InstallBaseTools.ps1"
-
-## WINDOWS UPDATES ##
-# Install the PSWindowsUpdate module if not already installed
-if (-not (Get-Module -Name PSWindowsUpdate -ListAvailable)) {
-    Install-Module -Name PSWindowsUpdate -Force
-}
-
-# Import the PSWindowsUpdate module
-Import-Module -Name PSWindowsUpdate -Force -ErrorAction Stop
-
-# Check for available Windows updates
-$updates = Get-WindowsUpdate -AcceptAll -Install -IgnoreReboot
-
-# Check if any updates were installed
-if ($updates.Count -gt 0) {
-    Write-Output "Installed Windows Updates:"
-    foreach ($update in $updates) {
-        Write-Output "$($update.Title) - $($update.Description)"
-    }
-    $InstalledUpdates = Get-WUList
-    Write-Output "List of Installed Updates:"
-    foreach ($installedUpdate in $InstalledUpdates) {
-        Write-Output "$($installedUpdate.Title)"
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+        Write-Host "  Chocolatey installed." -ForegroundColor Green
+    } catch {
+        Write-Host "  [!] Chocolatey install failed: $_" -ForegroundColor Red
     }
 } else {
-    Write-Output "No updates were installed."
+    Write-Host "  Chocolatey already present." -ForegroundColor DarkGray
 }
 
-Write-Host "Almost Complete - Should we reboot?" -ForegroundColor White
-
-function Restart-PC{
-    ##########
-    # Restart
-    ##########
-    Write-Host
-    Write-Host "Press any key to restart your system - or close this window to skip..." -ForegroundColor Black -BackgroundColor White
-    $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-    Write-Host "Restarting..."
-    Restart-Computer
+# — Winget —
+Write-Host ""
+Write-Host "  Winget..." -ForegroundColor DarkGray
+try {
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+    if (-not (Get-Module -ListAvailable -Name Microsoft.WinGet.Client)) {
+        Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery -Scope CurrentUser | Out-Null
+    }
+    Repair-WinGetPackageManager -ErrorAction SilentlyContinue
+    Write-Host "  Winget ready." -ForegroundColor Green
+} catch {
+    Write-Host "  [!] Winget setup issue: $_" -ForegroundColor Red
 }
-Restart-PC
+
+# — Scoop —
+Write-Host ""
+Write-Host "  Scoop..." -ForegroundColor DarkGray
+if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+    try {
+        Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+        Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+        Write-Host "  Scoop installed." -ForegroundColor Green
+    } catch {
+        Write-Host "  [!] Scoop install failed: $_" -ForegroundColor Red
+    }
+} else {
+    Write-Host "  Scoop already present." -ForegroundColor DarkGray
+}
+
+# Add standard Scoop buckets
+. "$buildFolder\config\tools.ps1"
+foreach ($bucket in $ScoopBuckets) {
+    scoop bucket add $bucket 2>&1 | Out-Null
+}
+
+# ── Tool selection menu ───────────────────────────────────────────────────────
+
+. "$buildFolder\scripts\Menu.ps1"
+. "$buildFolder\scripts\Install.ps1"
+
+Write-Host ""
+Write-Host "  Press any key to open the tool selection menu..." -ForegroundColor Black -BackgroundColor Yellow
+$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+
+$selectedTools = Show-ToolMenu -Catalog $ToolCatalog -Profile $Profile
+
+if ($selectedTools.Count -eq 0) {
+    Write-Host ""
+    Write-Host "  No tools selected. Skipping installs." -ForegroundColor DarkYellow
+} else {
+    Write-Host ""
+    Write-Host "  Installing $($selectedTools.Count) selected tools..." -ForegroundColor Cyan
+    $installResults = Install-SelectedTools -SelectedTools $selectedTools -ToolboxPath $ToolboxPath
+}
+
+# ── Windows settings & debloat ────────────────────────────────────────────────
+
+if (-not $SkipSettings) {
+    Write-Host ""
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    Write-Host "  APPLYING WINDOWS SETTINGS" -ForegroundColor Yellow
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    . "$buildFolder\scripts\SystemSettings.ps1"
+}
+
+if (-not $SkipDebloat) {
+    Write-Host ""
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    Write-Host "  REMOVING DEFAULT APPS" -ForegroundColor Yellow
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    . "$buildFolder\scripts\RemoveDefaultApps.ps1"
+}
+
+# ── Windows Update ────────────────────────────────────────────────────────────
+
+if (-not $SkipUpdate) {
+    Write-Host ""
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    Write-Host "  WINDOWS UPDATE" -ForegroundColor Yellow
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+
+    if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
+        Install-Module -Name PSWindowsUpdate -Force -Scope CurrentUser | Out-Null
+    }
+    Import-Module PSWindowsUpdate -Force -ErrorAction SilentlyContinue
+
+    Write-Host "  Checking for updates (this may take a few minutes)..." -ForegroundColor DarkGray
+    $updates = Get-WindowsUpdate -AcceptAll -Install -IgnoreReboot -ErrorAction SilentlyContinue
+
+    if ($updates -and $updates.Count -gt 0) {
+        Write-Host "  $($updates.Count) update(s) installed." -ForegroundColor Green
+    } else {
+        Write-Host "  No updates available or already up to date." -ForegroundColor DarkGray
+    }
+}
+
+# ── Done ──────────────────────────────────────────────────────────────────────
+
+Write-Host ""
+Write-Host ("=" * 111) -ForegroundColor White -BackgroundColor Black
+Write-Host "  WSB complete! " -ForegroundColor Black -BackgroundColor Green -NoNewline
+Write-Host "" -ForegroundColor White -BackgroundColor Black
+Write-Host ("=" * 111) -ForegroundColor White -BackgroundColor Black
+Write-Host ""
+
+Write-Host "  Press any key to restart, or close this window to skip..." -ForegroundColor Black -BackgroundColor White
+$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+Write-Host ""
+Write-Host "  Restarting..." -ForegroundColor DarkGray
+Restart-Computer
