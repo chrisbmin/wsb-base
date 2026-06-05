@@ -23,17 +23,17 @@ param(
 
 # ── Banner ────────────────────────────────────────────────────────────────────
 
-Write-Host ('=' * 45) -ForegroundColor DarkGray
+Write-Host ('=' * 30) -ForegroundColor DarkGray
 Write-Host ''
-Write-Host '    __        __   ____  ____  ' -ForegroundColor Yellow
-Write-Host '    \ \      / /  / ___|| __ ) ' -ForegroundColor Cyan
-Write-Host '     \ \ /\ / /   \___ \|  _ \ ' -ForegroundColor Green
-Write-Host '      \ V  V /     ___) || |_) |' -ForegroundColor Cyan
-Write-Host '       \_/\_/     |____/ |____/ ' -ForegroundColor Blue
+Write-Host '  ##   ##  #######  ######  ' -ForegroundColor Yellow
+Write-Host '  ##   ##  ##       ##   ## ' -ForegroundColor Cyan
+Write-Host '  ## # ##  #####    ######  ' -ForegroundColor Green
+Write-Host '  ###  ##  ##       ##   ## ' -ForegroundColor Cyan
+Write-Host '  ##   ##  #######  ######  ' -ForegroundColor Blue
 Write-Host ''
-Write-Host '       WorkStation Builder' -ForegroundColor White
+Write-Host '    WorkStation Builder' -ForegroundColor White
 Write-Host ''
-Write-Host ('=' * 45) -ForegroundColor DarkGray
+Write-Host ('=' * 30) -ForegroundColor DarkGray
 Write-Host ''
 
 # ── Admin check ───────────────────────────────────────────────────────────────
