@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     WorkStation Builder (WSB) — automated Windows workstation setup.
 

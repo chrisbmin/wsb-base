@@ -1,4 +1,4 @@
-# config/tools.ps1
+﻿# config/tools.ps1
 # Central tool catalog — all menus and install scripts read from here.
 #
 # Manager values:

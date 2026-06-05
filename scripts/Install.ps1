@@ -1,4 +1,4 @@
-# scripts/Install.ps1
+﻿# scripts/Install.ps1
 # Install dispatcher — routes each selected tool to the right package manager.
 # Dot-source this file, then call Install-SelectedTools.
 

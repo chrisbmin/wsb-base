@@ -1,4 +1,4 @@
-# scripts/Menu.ps1
+﻿# scripts/Menu.ps1
 # Interactive tool selection checklist.
 # Dot-source this file, then call Show-ToolMenu.
 
