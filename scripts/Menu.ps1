@@ -5,7 +5,7 @@
 function Show-ToolMenu {
     param(
         [Parameter(Mandatory)] [array]  $Catalog,
-        [Parameter(Mandatory)] [string] $Profile
+        [Parameter(Mandatory)] [string] $WsbProfile
     )
 
     Add-Type -AssemblyName PresentationFramework
@@ -15,7 +15,7 @@ function Show-ToolMenu {
     # Build item state list
     $items = [System.Collections.Generic.List[PSCustomObject]]::new()
     foreach ($tool in $Catalog) {
-        $sel = if ($Profile -eq 'work') { $tool.DefaultWork } else { $tool.DefaultPersonal }
+        $sel = if ($WsbProfile -eq 'work') { $tool.DefaultWork } else { $tool.DefaultPersonal }
         $items.Add([PSCustomObject]@{ Tool = $tool; Selected = $sel })
     }
     $categories = @($Catalog | ForEach-Object { $_.Category } | Select-Object -Unique)
@@ -182,7 +182,7 @@ function Show-ToolMenu {
     $script:wsbWindow = $window
 
     $script:wsbTotal.Text = " / $($items.Count)"
-    $profileLabel.Text    = $Profile.ToUpper()
+    $profileLabel.Text    = $WsbProfile.ToUpper()
 
     # Load CB logo from CDN — sets header image + title bar icon (silently skipped if unreachable)
     $headerLogo = $window.FindName('HeaderLogo')
@@ -190,12 +190,12 @@ function Show-ToolMenu {
         $wc    = [System.Net.WebClient]::new()
         $bytes = $wc.DownloadData('https://cdn.chrisbmn.com/static/favicon/favicon-96x96.png')
         $ms    = [System.IO.MemoryStream]::new($bytes)
-        $bmp   = [System.Windows.Media.Imaging.BitmapImage]::new()
-        $bmp.BeginInit()
-        $bmp.StreamSource = $ms
-        $bmp.CacheOption  = [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad
-        $bmp.EndInit()
-        $bmp.Freeze()
+        # PngBitmapDecoder with PreservePixelFormat keeps the alpha channel intact
+        $bmp   = [System.Windows.Media.Imaging.PngBitmapDecoder]::new(
+                     $ms,
+                     [System.Windows.Media.Imaging.BitmapCreateOptions]::PreservePixelFormat,
+                     [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad
+                 ).Frames[0]
         $headerLogo.Source = $bmp
         $window.Icon       = $bmp
     } catch { }
