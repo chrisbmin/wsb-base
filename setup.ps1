@@ -7,7 +7,7 @@
     interactive tool selection menu, installs selected tools, applies
     Windows settings, and runs Windows Update.
 
-.PARAMETER Profile
+.PARAMETER WsbProfile
     Pre-populate the tool menu with work or personal defaults.
     Accepts: work, personal. If omitted, you will be prompted.
 
@@ -29,11 +29,11 @@
     irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1" | iex
 
 .EXAMPLE
-    & ([scriptblock]::Create((irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1"))) -Profile work
+    & ([scriptblock]::Create((irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1"))) -WsbProfile work
 #>
 param(
     [ValidateSet('work','personal')]
-    [string] $Profile      = '',
+    [string] $WsbProfile   = '',
     [string] $ToolboxPath  = "$env:USERPROFILE\toolbox",
     [switch] $SkipSettings,
     [switch] $SkipDebloat,
@@ -90,11 +90,11 @@ try {
 # ── Profile selection ─────────────────────────────────────────────────────────
 
 # Support env var fallback for irm | iex usage (can't pass params to piped scripts)
-if ($Profile -eq '' -and $env:WSB_PROFILE -in 'work','personal') {
-    $Profile = $env:WSB_PROFILE
+if ($WsbProfile -eq '' -and $env:WSB_PROFILE -in 'work','personal') {
+    $WsbProfile = $env:WSB_PROFILE
 }
 
-if ($Profile -eq '') {
+if ($WsbProfile -eq '') {
     Write-Host ""
     Write-Host "  Select a profile to pre-populate tool defaults:" -ForegroundColor Yellow
     Write-Host "    1  Work       (sysadmin stack: RSAT, Azure, Nutanix tools, admin utilities)" -ForegroundColor White
@@ -103,12 +103,12 @@ if ($Profile -eq '') {
     do {
         $choice = Read-Host "  Enter 1 or 2"
     } until ($choice -in '1','2')
-    $Profile = if ($choice -eq '1') { 'work' } else { 'personal' }
+    $WsbProfile = if ($choice -eq '1') { 'work' } else { 'personal' }
 }
 
 Write-Host ""
 Write-Host "  Profile: " -ForegroundColor DarkGray -NoNewline
-Write-Host $Profile.ToUpper() -ForegroundColor Cyan
+Write-Host $WsbProfile.ToUpper() -ForegroundColor Cyan
 
 # ── Toolbox path ──────────────────────────────────────────────────────────────
 
@@ -223,7 +223,7 @@ Write-Host ""
 Write-Host "  Press any key to open the tool selection menu..." -ForegroundColor Black -BackgroundColor Yellow
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 
-$selectedTools = Show-ToolMenu -Catalog $ToolCatalog -Profile $Profile
+$selectedTools = Show-ToolMenu -Catalog $ToolCatalog -Profile $WsbProfile
 
 if ($selectedTools.Count -eq 0) {
     Write-Host ""

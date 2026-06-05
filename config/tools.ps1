@@ -61,7 +61,7 @@ $ToolCatalog = @(
         Manager         = 'winget'
         PackageId       = 'Google.Chrome'
         DefaultWork     = $true
-        DefaultPersonal = $true
+        DefaultPersonal = $false
     },
     @{
         Name            = 'Mozilla Firefox'
@@ -70,7 +70,7 @@ $ToolCatalog = @(
         Manager         = 'winget'
         PackageId       = 'Mozilla.Firefox'
         DefaultWork     = $true
-        DefaultPersonal = $true
+        DefaultPersonal = $false
     },
     @{
         Name            = 'Firefox Developer Edition'
@@ -80,6 +80,15 @@ $ToolCatalog = @(
         PackageId       = 'Mozilla.FirefoxDeveloperEdition'
         DefaultWork     = $false
         DefaultPersonal = $false
+    },
+    @{
+        Name            = 'Brave Browser'
+        Category        = 'Browsers'
+        Description     = 'Privacy-focused browser with built-in ad/tracker blocking and Shields'
+        Manager         = 'winget'
+        PackageId       = 'Brave.Brave'
+        DefaultWork     = $false
+        DefaultPersonal = $true
     },
 
     # ── Dev Tools ────────────────────────────────────────────────────────────
@@ -98,7 +107,7 @@ $ToolCatalog = @(
         Description     = 'Git version control — includes Git Bash and credential manager'
         Manager         = 'winget'
         PackageId       = 'Git.Git'
-        DefaultWork     = $true
+        DefaultWork     = $false
         DefaultPersonal = $true
     },
     @{
@@ -135,7 +144,7 @@ $ToolCatalog = @(
         Manager         = 'scoop'
         PackageId       = 'jq'
         ScoopBucket     = 'main'
-        DefaultWork     = $true
+        DefaultWork     = $false
         DefaultPersonal = $false
     },
     @{
@@ -145,7 +154,7 @@ $ToolCatalog = @(
         Manager         = 'scoop'
         PackageId       = 'yq'
         ScoopBucket     = 'main'
-        DefaultWork     = $true
+        DefaultWork     = $false
         DefaultPersonal = $false
     },
 
@@ -165,7 +174,7 @@ $ToolCatalog = @(
         Description     = 'Modern minimal notepad for quick notes — clean UX, tabbed'
         Manager         = 'winget'
         PackageId       = 'JamieOleary.Notepads'
-        DefaultWork     = $false
+        DefaultWork     = $true
         DefaultPersonal = $true
         Notes           = 'If install fails by ID, try: winget install -e --name "Notepads App"'
     },
@@ -179,11 +188,11 @@ $ToolCatalog = @(
         DefaultPersonal = $true
     },
     @{
-        Name            = 'ShareX'
+        Name            = 'Snipaste'
         Category        = 'Productivity'
         Description     = 'Screen capture, recording, and annotation — scrolling capture, OCR, upload workflows'
         Manager         = 'winget'
-        PackageId       = 'ShareX.ShareX'
+        PackageId       = 'liule.Snipaste'
         DefaultWork     = $true
         DefaultPersonal = $true
     },
@@ -216,7 +225,7 @@ $ToolCatalog = @(
         Manager         = 'winget'
         PackageId       = 'WinSCP.WinSCP'
         DefaultWork     = $true
-        DefaultPersonal = $true
+        DefaultPersonal = $false
     },
     @{
         Name            = 'FileZilla'
@@ -289,7 +298,7 @@ $ToolCatalog = @(
         Description     = 'Microsoft Local Group Policy Object utility — apply/export/import GPO settings on non-domain machines'
         Manager         = 'manual'
         PackageId       = 'https://www.microsoft.com/en-us/download/details.aspx?id=55319'
-        DefaultWork     = $true
+        DefaultWork     = $false
         DefaultPersonal = $false
         Notes           = 'No package manager entry. Download from Microsoft Security Compliance Toolkit.'
     },
@@ -330,7 +339,7 @@ $ToolCatalog = @(
         Description     = 'Network discovery and port scanning — includes Zenmap GUI and Nping'
         Manager         = 'winget'
         PackageId       = 'Insecure.Nmap'
-        DefaultWork     = $true
+        DefaultWork     = $false
         DefaultPersonal = $false
     },
     @{
@@ -339,7 +348,7 @@ $ToolCatalog = @(
         Description     = 'Network protocol analyzer — deep packet inspection and capture'
         Manager         = 'winget'
         PackageId       = 'WiresharkFoundation.Wireshark'
-        DefaultWork     = $true
+        DefaultWork     = $false
         DefaultPersonal = $false
     },
     @{
@@ -348,7 +357,7 @@ $ToolCatalog = @(
         Description     = 'GUI front-end for PortQry — test TCP/UDP port connectivity and query service endpoints'
         Manager         = 'manual'
         PackageId       = 'https://www.microsoft.com/en-us/download/details.aspx?id=24009'
-        DefaultWork     = $true
+        DefaultWork     = $false
         DefaultPersonal = $false
         Notes           = 'No package manager entry. Download from Microsoft.'
     },
@@ -440,7 +449,7 @@ $ToolCatalog = @(
         Description     = 'SSH and SFTP sessions directly from PowerShell — useful for scripting against Linux/network gear'
         Manager         = 'psgallery'
         PackageId       = 'Posh-SSH'
-        DefaultWork     = $true
+        DefaultWork     = $false
         DefaultPersonal = $false
     },
     @{
