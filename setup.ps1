@@ -177,7 +177,8 @@ Write-Host "  Scoop..." -ForegroundColor DarkGray
 if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
     try {
         Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-        Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+        # -RunAsAdmin is required when the session is elevated; officially supported by Scoop
+        Invoke-Expression "& {$(Invoke-RestMethod -Uri 'https://get.scoop.sh')} -RunAsAdmin"
         Write-Host "  Scoop installed." -ForegroundColor Green
     } catch {
         Write-Host "  [!] Scoop install failed: $_" -ForegroundColor Red
