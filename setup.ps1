@@ -178,7 +178,7 @@ if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
     try {
         Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
         # -RunAsAdmin is required when the session is elevated; officially supported by Scoop
-        Invoke-Expression "& {$(Invoke-RestMethod -Uri 'https://get.scoop.sh')}"
+        Invoke-Expression "& {$(Invoke-RestMethod -Uri 'https://get.scoop.sh')} -RunAsAdmin"
         Write-Host "  Scoop installed." -ForegroundColor Green
     } catch {
         Write-Host "  [!] Scoop install failed: $_" -ForegroundColor Yellow -BackgroundColor Red
