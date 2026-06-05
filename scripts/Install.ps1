@@ -1,4 +1,4 @@
-﻿# scripts/Install.ps1
+# scripts/Install.ps1
 # Install dispatcher — routes each selected tool to the right package manager.
 # Dot-source this file, then call Install-SelectedTools.
 
@@ -50,7 +50,7 @@ function Install-SelectedTools {
                     $results.Failed.Add($tool.Name)
                 }
             } catch {
-                Write-Fail "$($tool.Name) — $_"
+                Write-Fail "$($tool.Name) - $_"
                 $results.Failed.Add($tool.Name)
             }
         }
@@ -79,7 +79,7 @@ function Install-SelectedTools {
                     $results.Failed.Add($tool.Name)
                 }
             } catch {
-                Write-Fail "$($tool.Name) — $_"
+                Write-Fail "$($tool.Name) - $_"
                 $results.Failed.Add($tool.Name)
             }
         }
@@ -110,7 +110,7 @@ function Install-SelectedTools {
                 Write-OK $tool.Name
                 $results.Success.Add($tool.Name)
             } catch {
-                Write-Fail "$($tool.Name) — $_"
+                Write-Fail "$($tool.Name) - $_"
                 $results.Failed.Add($tool.Name)
             }
         }
@@ -141,7 +141,7 @@ function Install-SelectedTools {
                 Write-OK $tool.Name
                 $results.Success.Add($tool.Name)
             } catch {
-                Write-Fail "$($tool.Name) — $_"
+                Write-Fail "$($tool.Name) - $_"
                 $results.Failed.Add($tool.Name)
             }
         }
@@ -169,7 +169,7 @@ function Install-SelectedTools {
                     $results.Success.Add($tool.Name)
                 }
             } catch {
-                Write-Fail "$($tool.Name) — $_"
+                Write-Fail "$($tool.Name) - $_"
                 $results.Failed.Add($tool.Name)
             }
         }
@@ -196,7 +196,7 @@ function Install-SelectedTools {
                 Copy-Item -Path $licSrc -Destination $licDest -Force
                 Write-OK "MobaXterm license applied from toolbox"
             } catch {
-                Write-Fail "Could not copy MobaXterm license — $_"
+                Write-Fail "Could not copy MobaXterm license - $_"
                 Write-Info "Copy manually: $licSrc  ->  $licDest"
             }
         } else {
@@ -216,7 +216,7 @@ function Install-SelectedTools {
                 Write-OK "Toolbox path added: $ToolboxPath"
                 Write-Info "Restart your terminal for PATH changes to take effect."
             } catch {
-                Write-Fail "Could not update PATH — $_"
+                Write-Fail "Could not update PATH - $_"
                 Write-Info "Add manually: $ToolboxPath"
             }
         } else {

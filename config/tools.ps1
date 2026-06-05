@@ -1,4 +1,4 @@
-﻿# config/tools.ps1
+# config/tools.ps1
 # Central tool catalog — all menus and install scripts read from here.
 #
 # Manager values:
@@ -131,7 +131,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Windows PowerToys'
         Category        = 'Dev Tools'
-        Description     = "Microsoft's power-user utility collection — FancyZones, PowerRename, Run launcher, and more"
+        Description     = "Microsoft's power-user utility collection - FancyZones, PowerRename, Run launcher, and more"
         Manager         = 'winget'
         PackageId       = 'Microsoft.PowerToys'
         DefaultWork     = $true
@@ -305,7 +305,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Windows Admin Center'
         Category        = 'Admin & Security Tools'
-        Description     = "Microsoft's browser-based server management — replaces many MMC snap-ins with a modern UI"
+        Description     = "Microsoft's browser-based server management - replaces many MMC snap-ins with a modern UI"
         Manager         = 'winget'
         PackageId       = 'Microsoft.WindowsAdminCenter'
         DefaultWork     = $false

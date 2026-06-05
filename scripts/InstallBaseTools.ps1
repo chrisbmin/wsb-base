@@ -1,4 +1,4 @@
-﻿# These are the base applications I like to install regardless of the machine I'm working on.
+# These are the base applications I like to install regardless of the machine I'm working on.
 # Other optional applications can be installed based on the machine's purpose.
 # Menu's to the optional programs will be added in the future via optional tools scripts. Check InstallOptionalTools.ps1 for more information.
 

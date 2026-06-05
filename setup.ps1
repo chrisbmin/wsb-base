@@ -1,36 +1,18 @@
-﻿<#
-.SYNOPSIS
-    WorkStation Builder (WSB) — automated Windows workstation setup.
-
-.DESCRIPTION
-    Installs package managers (winget, Chocolatey, Scoop), presents an
-    interactive tool selection menu, installs selected tools, applies
-    Windows settings, and runs Windows Update.
-
-.PARAMETER WsbProfile
-    Pre-populate the tool menu with work or personal defaults.
-    Accepts: work, personal. If omitted, you will be prompted.
-
-.PARAMETER ToolboxPath
-    Path to your portable toolbox folder (added to user PATH).
-    Defaults to $env:USERPROFILE\toolbox if omitted.
-    Set to '' to skip toolbox setup.
-
-.PARAMETER SkipSettings
-    Skip Windows privacy/UI tweaks (SystemSettings.ps1).
-
-.PARAMETER SkipDebloat
-    Skip removal of default Windows apps (RemoveDefaultApps.ps1).
-
-.PARAMETER SkipUpdate
-    Skip Windows Update step at the end.
-
-.EXAMPLE
-    irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1" | iex
-
-.EXAMPLE
-    & ([scriptblock]::Create((irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1"))) -WsbProfile work
-#>
+# WorkStation Builder (WSB) - automated Windows workstation setup.
+# Installs package managers, presents a tool selection menu, applies settings.
+#
+# USAGE (irm | iex):
+#   irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1" | iex
+#
+# USAGE (with parameters):
+#   & ([scriptblock]::Create((irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1"))) -WsbProfile work
+#
+# PARAMETERS:
+#   -WsbProfile   : work | personal  (pre-selects tool defaults; prompted if omitted)
+#   -ToolboxPath  : path to portable tools folder (default: $env:USERPROFILE\toolbox)
+#   -SkipSettings : skip Windows privacy/UI tweaks
+#   -SkipDebloat  : skip removal of default Windows apps
+#   -SkipUpdate   : skip Windows Update at the end
 param(
     [string] $WsbProfile   = '',
     [string] $ToolboxPath  = "$env:USERPROFILE\toolbox",
