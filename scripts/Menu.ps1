@@ -359,6 +359,6 @@ function Show-ToolMenu {
 
     $null = $window.ShowDialog()
 
-    if ($window.Tag -ne 'install') { return @() }
+    if ($window.Tag -ne 'install') { return $null }
     return ($script:wsbBoxes | Where-Object { $_.CB.IsChecked } | ForEach-Object { $_.Item.Tool })
 }

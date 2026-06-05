@@ -212,7 +212,13 @@ foreach ($bucket in $ScoopBuckets) {
 Write-Host ""
 Write-Host "  Opening tool selection window..." -ForegroundColor DarkGray
 
-$selectedTools = Show-ToolMenu -Catalog $ToolCatalog -Profile $WsbProfile
+$selectedTools = Show-ToolMenu -Catalog $ToolCatalog -WsbProfile $WsbProfile
+
+if ($null -eq $selectedTools) {
+    Write-Host ""
+    Write-Host "  Build cancelled." -ForegroundColor DarkYellow
+    exit 0
+}
 
 if ($selectedTools.Count -eq 0) {
     Write-Host ""
