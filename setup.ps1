@@ -189,6 +189,15 @@ if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
     Write-Host "  Scoop already present." -ForegroundColor DarkGray
 }
 
+# Scoop requires git to add buckets — install it first if missing
+if (Get-Command scoop -ErrorAction SilentlyContinue) {
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+        Write-Host "  Installing git (required for Scoop buckets)..." -ForegroundColor DarkGray
+        scoop install git | Out-Null
+        Write-Host "  Git installed." -ForegroundColor Green
+    }
+}
+
 # Add standard Scoop buckets
 . "$buildFolder\config\tools.ps1"
 foreach ($bucket in $ScoopBuckets) {
