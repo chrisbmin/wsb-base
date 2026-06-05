@@ -32,7 +32,6 @@
     & ([scriptblock]::Create((irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1"))) -WsbProfile work
 #>
 param(
-    [ValidateSet('work','personal')]
     [string] $WsbProfile   = '',
     [string] $ToolboxPath  = "$env:USERPROFILE\toolbox",
     [switch] $SkipSettings,
@@ -88,6 +87,11 @@ try {
 }
 
 # ── Profile selection ─────────────────────────────────────────────────────────
+
+if ($WsbProfile -ne '' -and $WsbProfile -notin @('work','personal')) {
+    Write-Host "  [!] Invalid -WsbProfile '$WsbProfile'. Must be 'work' or 'personal'." -ForegroundColor Red
+    exit 1
+}
 
 # Support env var fallback for irm | iex usage (can't pass params to piped scripts)
 if ($WsbProfile -eq '' -and $env:WSB_PROFILE -in 'work','personal') {
