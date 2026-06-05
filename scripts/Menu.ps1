@@ -1,187 +1,344 @@
 # scripts/Menu.ps1
-# Interactive tool selection checklist.
+# WPF graphical tool selection window.
 # Dot-source this file, then call Show-ToolMenu.
 
 function Show-ToolMenu {
     param(
         [Parameter(Mandatory)] [array]  $Catalog,
-        [Parameter(Mandatory)] [string] $Profile   # 'work' or 'personal'
+        [Parameter(Mandatory)] [string] $Profile
     )
 
-    # Build mutable state list from catalog
+    Add-Type -AssemblyName PresentationFramework
+    Add-Type -AssemblyName PresentationCore
+    Add-Type -AssemblyName WindowsBase
+
+    # Build item state list
     $items = [System.Collections.Generic.List[PSCustomObject]]::new()
-    $n = 1
     foreach ($tool in $Catalog) {
-        $selected = if ($Profile -eq 'work') { $tool.DefaultWork } else { $tool.DefaultPersonal }
-        $items.Add([PSCustomObject]@{
-            Number   = $n
-            Tool     = $tool
-            Selected = $selected
-        })
-        $n++
+        $sel = if ($Profile -eq 'work') { $tool.DefaultWork } else { $tool.DefaultPersonal }
+        $items.Add([PSCustomObject]@{ Tool = $tool; Selected = $sel })
+    }
+    $categories = @($Catalog | ForEach-Object { $_.Category } | Select-Object -Unique)
+
+    # ── XAML ─────────────────────────────────────────────────────────────────────
+    [xml]$xaml = @'
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WorkStation Builder" Height="750" Width="1050"
+        MinHeight="500" MinWidth="700"
+        WindowStartupLocation="CenterScreen"
+        Background="#1e1e2e">
+  <Window.Resources>
+
+    <Style TargetType="CheckBox">
+      <Setter Property="Foreground" Value="#cdd6f4"/>
+      <Setter Property="BorderBrush" Value="#585b70"/>
+      <Setter Property="Margin" Value="0,2,0,2"/>
+      <Setter Property="Padding" Value="8,0,0,0"/>
+      <Setter Property="FontFamily" Value="Consolas"/>
+      <Setter Property="VerticalContentAlignment" Value="Top"/>
+    </Style>
+
+    <Style TargetType="Button">
+      <Setter Property="Background" Value="#313244"/>
+      <Setter Property="Foreground" Value="#cdd6f4"/>
+      <Setter Property="BorderBrush" Value="#45475a"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="18,7"/>
+      <Setter Property="FontFamily" Value="Consolas"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="4"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style TargetType="TextBox">
+      <Setter Property="Background" Value="#313244"/>
+      <Setter Property="Foreground" Value="#cdd6f4"/>
+      <Setter Property="BorderBrush" Value="#45475a"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="10,6"/>
+      <Setter Property="FontFamily" Value="Consolas"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="CaretBrush" Value="#cdd6f4"/>
+    </Style>
+
+  </Window.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <!-- Header -->
+    <Border Grid.Row="0" Background="#181825" Padding="24,14">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+          <TextBlock Text="WorkStation Builder" FontFamily="Consolas"
+                     FontSize="20" FontWeight="Bold" Foreground="#cba6f7"/>
+          <TextBlock Text="Check boxes to select tools, then click Install Selected."
+                     FontFamily="Consolas" FontSize="12" Foreground="#585b70" Margin="0,4,0,0"/>
+        </StackPanel>
+        <Border Grid.Column="1" Background="#313244" CornerRadius="6"
+                Padding="14,8" VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Profile: " FontFamily="Consolas" FontSize="12"
+                       Foreground="#585b70" VerticalAlignment="Center"/>
+            <TextBlock x:Name="ProfileLabel" FontFamily="Consolas" FontSize="12"
+                       FontWeight="Bold" Foreground="#a6e3a1" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- Search bar -->
+    <Border Grid.Row="1" Background="#1e1e2e" Padding="24,8,24,4">
+      <Grid>
+        <TextBox x:Name="SearchBox"/>
+        <TextBlock x:Name="SearchHint"
+                   Text="  Search by name, category, or description..."
+                   FontFamily="Consolas" FontSize="13" Foreground="#45475a"
+                   IsHitTestVisible="False" VerticalAlignment="Center"/>
+      </Grid>
+    </Border>
+
+    <!-- Tool list -->
+    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Background="#1e1e2e">
+      <StackPanel x:Name="ToolsPanel" Margin="24,8,24,16"/>
+    </ScrollViewer>
+
+    <!-- Footer -->
+    <Border Grid.Row="3" Background="#181825" BorderBrush="#313244"
+            BorderThickness="0,1,0,0" Padding="24,10">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="Selected: " FontFamily="Consolas" FontSize="13" Foreground="#585b70"/>
+          <TextBlock x:Name="SelectedCount" Text="0" FontFamily="Consolas"
+                     FontSize="13" FontWeight="Bold" Foreground="#a6e3a1"/>
+          <TextBlock x:Name="TotalCount" Text=" / 0" FontFamily="Consolas"
+                     FontSize="13" Foreground="#585b70"/>
+          <TextBlock Text="    * = notes    ! = manual install"
+                     FontFamily="Consolas" FontSize="11" Foreground="#45475a" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal">
+          <Button x:Name="BtnAll"     Content="Select All"      Margin="0,0,8,0"/>
+          <Button x:Name="BtnNone"    Content="Clear All"       Margin="0,0,8,0"/>
+          <Button x:Name="BtnCancel"  Content="Cancel"          Margin="0,0,8,0"/>
+          <Button x:Name="BtnInstall" Content="Install Selected"
+                  Background="#a6e3a1" Foreground="#1e1e2e"
+                  FontWeight="Bold"    BorderBrush="#a6e3a1"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>
+'@
+
+    $reader = [System.Xml.XmlNodeReader]::new($xaml)
+    $window = [Windows.Markup.XamlReader]::Load($reader)
+
+    # Named control references
+    $toolsPanel    = $window.FindName('ToolsPanel')
+    $searchBox     = $window.FindName('SearchBox')
+    $searchHint    = $window.FindName('SearchHint')
+    $profileLabel  = $window.FindName('ProfileLabel')
+    $btnAll        = $window.FindName('BtnAll')
+    $btnNone       = $window.FindName('BtnNone')
+    $btnCancel     = $window.FindName('BtnCancel')
+    $btnInstall    = $window.FindName('BtnInstall')
+
+    # Script-scope so event handler closures can reach them
+    $script:wsbCount  = $window.FindName('SelectedCount')
+    $script:wsbTotal  = $window.FindName('TotalCount')
+    $script:wsbBoxes  = [System.Collections.Generic.List[PSCustomObject]]::new()
+    $script:wsbCats   = $categories
+    $script:wsbPanel  = $toolsPanel
+    $script:wsbHint   = $searchHint
+    $script:wsbWindow = $window
+
+    $script:wsbTotal.Text = " / $($items.Count)"
+    $profileLabel.Text    = $Profile.ToUpper()
+
+    $conv = [System.Windows.Media.BrushConverter]::new()
+
+    function Update-WsbCount {
+        $n = ($script:wsbBoxes | Where-Object { $_.CB.IsChecked }).Count
+        $script:wsbCount.Text = "$n"
     }
 
-    $managerLabel = @{
-        winget    = 'winget'
-        choco     = 'choco '
-        scoop     = 'scoop '
-        psgallery = 'psgal '
-        feature   = 'feat  '
-        manual    = 'manual'
+    # ── Build tool rows ──────────────────────────────────────────────────────────
+    foreach ($cat in $categories) {
+        $catItems = $items | Where-Object { $_.Tool.Category -eq $cat }
+
+        # Category label
+        $catLabel            = [System.Windows.Controls.TextBlock]::new()
+        $catLabel.Text       = $cat.ToUpper()
+        $catLabel.FontFamily = [System.Windows.Media.FontFamily]::new('Consolas')
+        $catLabel.FontSize   = 11
+        $catLabel.FontWeight = [System.Windows.FontWeights]::Bold
+        $catLabel.Foreground = $conv.ConvertFromString('#f38ba8')
+        $catLabel.Margin     = [System.Windows.Thickness]::new(0, 20, 0, 4)
+        $catLabel.Tag        = "cat:$cat"
+        $toolsPanel.Children.Add($catLabel)
+
+        $sep            = [System.Windows.Controls.Separator]::new()
+        $sep.Background = $conv.ConvertFromString('#313244')
+        $sep.Margin     = [System.Windows.Thickness]::new(0, 0, 0, 6)
+        $sep.Tag        = "cat:$cat"
+        $toolsPanel.Children.Add($sep)
+
+        foreach ($item in $catItems) {
+            # Row wrapper — Tag is the searchable text
+            $rowBorder        = [System.Windows.Controls.Border]::new()
+            $rowBorder.Margin = [System.Windows.Thickness]::new(0, 1, 0, 1)
+            $rowBorder.Tag    = "$($item.Tool.Name) $($item.Tool.Description) $($item.Tool.Category)"
+
+            $cb           = [System.Windows.Controls.CheckBox]::new()
+            $cb.IsChecked = $item.Selected
+
+            # Inner stack: name line + description line
+            $inner = [System.Windows.Controls.StackPanel]::new()
+
+            # Line 1: tool name + manager tag (+ notes marker)
+            $nameRow             = [System.Windows.Controls.StackPanel]::new()
+            $nameRow.Orientation = [System.Windows.Controls.Orientation]::Horizontal
+
+            $nameBlock            = [System.Windows.Controls.TextBlock]::new()
+            $nameBlock.FontFamily = [System.Windows.Media.FontFamily]::new('Consolas')
+            $nameBlock.FontSize   = 13
+            $nameBlock.Text       = $item.Tool.Name
+
+            $mgrBlock            = [System.Windows.Controls.TextBlock]::new()
+            $mgrBlock.FontFamily = [System.Windows.Media.FontFamily]::new('Consolas')
+            $mgrBlock.FontSize   = 11
+            $mgrBlock.VerticalAlignment = [System.Windows.VerticalAlignment]::Center
+            $mgrBlock.Margin     = [System.Windows.Thickness]::new(8, 0, 0, 0)
+
+            if ($item.Tool.Manager -eq 'manual') {
+                $nameBlock.Foreground = $conv.ConvertFromString('#585b70')
+                $mgrBlock.Text        = '[manual !]'
+                $mgrBlock.Foreground  = $conv.ConvertFromString('#f9e2af')
+            } else {
+                $nameBlock.Foreground = $conv.ConvertFromString('#cdd6f4')
+                $mgrBlock.Text        = "[$($item.Tool.Manager)]"
+                $mgrBlock.Foreground  = $conv.ConvertFromString('#45475a')
+            }
+
+            $nameRow.Children.Add($nameBlock)
+            $nameRow.Children.Add($mgrBlock)
+
+            if ($item.Tool.Notes) {
+                $noteTag                   = [System.Windows.Controls.TextBlock]::new()
+                $noteTag.FontFamily        = [System.Windows.Media.FontFamily]::new('Consolas')
+                $noteTag.FontSize          = 11
+                $noteTag.Text              = '  *'
+                $noteTag.Foreground        = $conv.ConvertFromString('#f9e2af')
+                $noteTag.VerticalAlignment = [System.Windows.VerticalAlignment]::Center
+                $noteTag.ToolTip           = $item.Tool.Notes
+                $nameRow.Children.Add($noteTag)
+            }
+            $inner.Children.Add($nameRow)
+
+            # Line 2: description (smaller, muted)
+            if ($item.Tool.Description) {
+                $descBlock              = [System.Windows.Controls.TextBlock]::new()
+                $descBlock.FontFamily   = [System.Windows.Media.FontFamily]::new('Consolas')
+                $descBlock.FontSize     = 11
+                $descBlock.Text         = $item.Tool.Description
+                $descBlock.Foreground   = $conv.ConvertFromString('#585b70')
+                $descBlock.TextWrapping = [System.Windows.TextWrapping]::Wrap
+                $descBlock.Margin       = [System.Windows.Thickness]::new(0, 2, 0, 4)
+                $inner.Children.Add($descBlock)
+            }
+
+            $cb.Content      = $inner
+            $rowBorder.Child = $cb
+            $toolsPanel.Children.Add($rowBorder)
+
+            $cb.Add_Checked({ Update-WsbCount })
+            $cb.Add_Unchecked({ Update-WsbCount })
+
+            $script:wsbBoxes.Add([PSCustomObject]@{ Item = $item; CB = $cb; Row = $rowBorder })
+        }
     }
 
-    while ($true) {
-        Clear-Host
+    Update-WsbCount
 
-        Write-Host ""
-        Write-Host "  ================================================================" -ForegroundColor DarkGray
-        Write-Host "   WORKSTATION BUILDER  " -ForegroundColor Cyan -NoNewline
-        Write-Host ">>  " -ForegroundColor DarkGray -NoNewline
-        Write-Host "Tool Selection" -ForegroundColor Yellow -NoNewline
-        Write-Host "  ($Profile profile)" -ForegroundColor DarkGray
-        Write-Host "  ================================================================" -ForegroundColor DarkGray
-        Write-Host ""
+    # ── Search handler ───────────────────────────────────────────────────────────
+    $searchBox.Add_TextChanged({
+        $q = $this.Text.Trim().ToLower()
 
-        # Derive category order from catalog (first-appearance order)
-        $categoryOrder = [System.Collections.Generic.List[string]]::new()
-        foreach ($item in $items) {
-            if (-not $categoryOrder.Contains($item.Tool.Category)) {
-                $categoryOrder.Add($item.Tool.Category)
+        $script:wsbHint.Visibility = if ($q -eq '') {
+            [System.Windows.Visibility]::Visible
+        } else {
+            [System.Windows.Visibility]::Collapsed
+        }
+
+        foreach ($e in $script:wsbBoxes) {
+            $match = $q -eq '' -or $e.Row.Tag.ToString().ToLower().Contains($q)
+            $e.Row.Visibility = if ($match) {
+                [System.Windows.Visibility]::Visible
+            } else {
+                [System.Windows.Visibility]::Collapsed
             }
         }
 
-        foreach ($cat in $categoryOrder) {
-            $catItems = $items | Where-Object { $_.Tool.Category -eq $cat }
-            Write-Host "  $($cat.ToUpper())" -ForegroundColor Yellow
-            foreach ($item in $catItems) {
-                $numStr  = $item.Number.ToString().PadLeft(3)
-                $mgr     = $managerLabel[$item.Tool.Manager]
-
-                if ($item.Tool.Manager -eq 'manual') {
-                    # Manual tools shown differently — always skipped by auto-install
-                    $check      = '[!]'
-                    $checkColor = 'DarkYellow'
-                    $nameColor  = 'DarkGray'
-                } elseif ($item.Selected) {
-                    $check      = '[x]'
-                    $checkColor = 'Green'
-                    $nameColor  = 'White'
-                } else {
-                    $check      = '[ ]'
-                    $checkColor = 'DarkGray'
-                    $nameColor  = 'DarkGray'
-                }
-
-                $hasNote = $item.Tool.Notes -and $item.Tool.Notes -ne ''
-                $noteMark = if ($hasNote) { '*' } else { ' ' }
-
-                Write-Host "  " -NoNewline
-                Write-Host $check -ForegroundColor $checkColor -NoNewline
-                Write-Host " $numStr  " -ForegroundColor DarkGray -NoNewline
-                Write-Host "$($item.Tool.Name.PadRight(36))" -ForegroundColor $nameColor -NoNewline
-                Write-Host " $mgr" -ForegroundColor DarkGray -NoNewline
-                Write-Host " $noteMark" -ForegroundColor DarkYellow
+        # Hide category headers when all their tools are filtered out
+        foreach ($cat in $script:wsbCats) {
+            $anyVisible = ($script:wsbBoxes | Where-Object {
+                $_.Item.Tool.Category -eq $cat -and
+                $_.Row.Visibility -eq [System.Windows.Visibility]::Visible
+            }).Count -gt 0
+            $vis = if ($anyVisible) {
+                [System.Windows.Visibility]::Visible
+            } else {
+                [System.Windows.Visibility]::Collapsed
             }
-            Write-Host ""
-        }
-
-        $selectedCount = ($items | Where-Object { $_.Selected }).Count
-        $manualCount   = ($items | Where-Object { $_.Tool.Manager -eq 'manual' -and $_.Selected }).Count
-
-        Write-Host "  ----------------------------------------------------------------" -ForegroundColor DarkGray
-        Write-Host "  [x] = will install   [!] = manual (link shown after run)   * = has notes" -ForegroundColor DarkGray
-        Write-Host ""
-        Write-Host "  Selected: " -ForegroundColor DarkGray -NoNewline
-        Write-Host "$selectedCount" -ForegroundColor Cyan -NoNewline
-        Write-Host " / $($items.Count)   " -ForegroundColor DarkGray -NoNewline
-        if ($manualCount -gt 0) {
-            Write-Host "($manualCount manual)" -ForegroundColor DarkYellow -NoNewline
-        }
-        Write-Host ""
-        Write-Host ""
-        Write-Host "  Commands: " -ForegroundColor DarkGray -NoNewline
-        Write-Host "A" -ForegroundColor Cyan -NoNewline
-        Write-Host "=all  " -ForegroundColor DarkGray -NoNewline
-        Write-Host "N" -ForegroundColor Cyan -NoNewline
-        Write-Host "=none  " -ForegroundColor DarkGray -NoNewline
-        Write-Host "D" -ForegroundColor Green -NoNewline
-        Write-Host "=done/install  " -ForegroundColor DarkGray -NoNewline
-        Write-Host "?" -ForegroundColor Cyan -NoNewline
-        Write-Host "=show notes" -ForegroundColor DarkGray
-        Write-Host "  Toggle tools by typing their numbers (e.g. " -ForegroundColor DarkGray -NoNewline
-        Write-Host "3 6 12" -ForegroundColor Cyan -NoNewline
-        Write-Host ")" -ForegroundColor DarkGray
-        Write-Host "  ----------------------------------------------------------------" -ForegroundColor DarkGray
-        $raw = Read-Host "  >"
-
-        $raw = $raw.Trim()
-        if ($raw -eq '') { continue }
-
-        switch -Regex ($raw.ToUpper()) {
-            '^D$' { break }
-
-            '^A$' {
-                foreach ($item in $items) {
-                    if ($item.Tool.Manager -ne 'manual') { $item.Selected = $true }
-                }
-                continue
-            }
-
-            '^N$' {
-                foreach ($item in $items) { $item.Selected = $false }
-                continue
-            }
-
-            '^\?$' {
-                # Show notes for all tools that have them
-                Clear-Host
-                Write-Host ""
-                Write-Host "  TOOL NOTES" -ForegroundColor Yellow
-                Write-Host "  ----------------------------------------------------------------" -ForegroundColor DarkGray
-                $noteItems = $items | Where-Object { $_.Tool.Notes -and $_.Tool.Notes -ne '' }
-                if ($noteItems.Count -eq 0) {
-                    Write-Host "  No notes." -ForegroundColor DarkGray
-                } else {
-                    foreach ($item in $noteItems) {
-                        Write-Host "  $($item.Number.ToString().PadLeft(3))  " -ForegroundColor DarkGray -NoNewline
-                        Write-Host "$($item.Tool.Name)" -ForegroundColor White
-                        Write-Host "       $($item.Tool.Notes)" -ForegroundColor DarkYellow
-                        Write-Host ""
-                    }
-                }
-                Write-Host "  Press any key to return..." -ForegroundColor DarkGray
-                $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
-                continue
-            }
-
-            default {
-                # Parse space-separated numbers
-                $nums = $raw -split '\s+' | ForEach-Object {
-                    $parsed = 0
-                    if ([int]::TryParse($_, [ref]$parsed)) { $parsed } else { $null }
-                } | Where-Object { $_ -ne $null }
-
-                foreach ($num in $nums) {
-                    $match = $items | Where-Object { $_.Number -eq $num }
-                    if ($match) {
-                        if ($match.Tool.Manager -eq 'manual') {
-                            # Manual tools: always show selected (for the links summary), but warn
-                            $match.Selected = -not $match.Selected
-                        } else {
-                            $match.Selected = -not $match.Selected
-                        }
-                    } else {
-                        Write-Host "  No tool with number $num." -ForegroundColor DarkYellow
-                        Start-Sleep -Milliseconds 800
-                    }
-                }
-                continue
+            foreach ($child in $script:wsbPanel.Children) {
+                if ($child.Tag -eq "cat:$cat") { $child.Visibility = $vis }
             }
         }
+    })
 
-        # Only reach here via 'D' — exit the loop
-        break
-    }
+    # ── Button handlers ──────────────────────────────────────────────────────────
+    $btnAll.Add_Click({
+        foreach ($e in $script:wsbBoxes) { $e.CB.IsChecked = $true }
+    })
+    $btnNone.Add_Click({
+        foreach ($e in $script:wsbBoxes) { $e.CB.IsChecked = $false }
+    })
+    $btnCancel.Add_Click({
+        $script:wsbWindow.Tag = 'cancel'
+        $script:wsbWindow.Close()
+    })
+    $btnInstall.Add_Click({
+        $script:wsbWindow.Tag = 'install'
+        $script:wsbWindow.Close()
+    })
 
-    return ($items | Where-Object { $_.Selected } | ForEach-Object { $_.Tool })
+    $null = $window.ShowDialog()
+
+    if ($window.Tag -ne 'install') { return @() }
+    return ($script:wsbBoxes | Where-Object { $_.CB.IsChecked } | ForEach-Object { $_.Item.Tool })
 }

@@ -210,8 +210,7 @@ foreach ($bucket in $ScoopBuckets) {
 . "$buildFolder\scripts\Install.ps1"
 
 Write-Host ""
-Write-Host "  Press any key to open the tool selection menu..." -ForegroundColor Black -BackgroundColor Yellow
-$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+Write-Host "  Opening tool selection window..." -ForegroundColor DarkGray
 
 $selectedTools = Show-ToolMenu -Catalog $ToolCatalog -Profile $WsbProfile
 
