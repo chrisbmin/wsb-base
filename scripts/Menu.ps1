@@ -87,16 +87,20 @@ function Show-ToolMenu {
     <Border Grid.Row="0" Background="#181825" Padding="24,14">
       <Grid>
         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="*"/>
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0">
+        <Image x:Name="HeaderLogo" Grid.Column="0" Width="48" Height="48"
+               Margin="0,0,16,0" VerticalAlignment="Center"
+               RenderOptions.BitmapScalingMode="HighQuality"/>
+        <StackPanel Grid.Column="1">
           <TextBlock Text="WorkStation Builder" FontFamily="Consolas"
                      FontSize="20" FontWeight="Bold" Foreground="#cba6f7"/>
           <TextBlock Text="Check boxes to select tools, then click Install Selected."
                      FontFamily="Consolas" FontSize="12" Foreground="#585b70" Margin="0,4,0,0"/>
         </StackPanel>
-        <Border Grid.Column="1" Background="#313244" CornerRadius="6"
+        <Border Grid.Column="2" Background="#313244" CornerRadius="6"
                 Padding="14,8" VerticalAlignment="Center">
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="Profile: " FontFamily="Consolas" FontSize="12"
@@ -179,6 +183,22 @@ function Show-ToolMenu {
 
     $script:wsbTotal.Text = " / $($items.Count)"
     $profileLabel.Text    = $Profile.ToUpper()
+
+    # Load CB logo from CDN — sets header image + title bar icon (silently skipped if unreachable)
+    $headerLogo = $window.FindName('HeaderLogo')
+    try {
+        $wc    = [System.Net.WebClient]::new()
+        $bytes = $wc.DownloadData('https://cdn.chrisbmn.com/static/favicon/favicon-96x96.png')
+        $ms    = [System.IO.MemoryStream]::new($bytes)
+        $bmp   = [System.Windows.Media.Imaging.BitmapImage]::new()
+        $bmp.BeginInit()
+        $bmp.StreamSource = $ms
+        $bmp.CacheOption  = [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad
+        $bmp.EndInit()
+        $bmp.Freeze()
+        $headerLogo.Source = $bmp
+        $window.Icon       = $bmp
+    } catch { }
 
     $conv = [System.Windows.Media.BrushConverter]::new()
 
