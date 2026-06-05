@@ -28,7 +28,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Windows Terminal'
         Category        = 'Shell & Terminal'
-        Description     = 'Modern tabbed terminal — Command Prompt, PowerShell, WSL, Azure Cloud Shell'
+        Description     = 'Modern tabbed terminal - Command Prompt, PowerShell, WSL, Azure Cloud Shell'
         Manager         = 'winget'
         PackageId       = 'Microsoft.WindowsTerminal'
         DefaultWork     = $true
@@ -37,7 +37,7 @@ $ToolCatalog = @(
     @{
         Name            = 'PowerShell 7'
         Category        = 'Shell & Terminal'
-        Description     = 'Cross-platform PowerShell (PS7+) — runs side-by-side with Windows PowerShell 5.1'
+        Description     = 'Cross-platform PowerShell (PS7+) - runs side-by-side with Windows PowerShell 5.1'
         Manager         = 'winget'
         PackageId       = 'Microsoft.PowerShell'
         DefaultWork     = $true
@@ -95,7 +95,7 @@ $ToolCatalog = @(
     @{
         Name            = 'VS Code'
         Category        = 'Dev Tools'
-        Description     = 'Visual Studio Code — lightweight editor with extensions for nearly everything'
+        Description     = 'Visual Studio Code - lightweight editor with extensions for nearly everything'
         Manager         = 'winget'
         PackageId       = 'Microsoft.VisualStudioCode'
         DefaultWork     = $true
@@ -104,7 +104,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Git'
         Category        = 'Dev Tools'
-        Description     = 'Git version control — includes Git Bash and credential manager'
+        Description     = 'Git version control - includes Git Bash and credential manager'
         Manager         = 'winget'
         PackageId       = 'Git.Git'
         DefaultWork     = $false
@@ -122,7 +122,7 @@ $ToolCatalog = @(
     @{
         Name            = 'WinMerge'
         Category        = 'Dev Tools'
-        Description     = 'File and folder diff/merge tool — great for config comparisons'
+        Description     = 'File and folder diff/merge tool - great for config comparisons'
         Manager         = 'winget'
         PackageId       = 'WinMerge.WinMerge'
         DefaultWork     = $true
@@ -140,7 +140,7 @@ $ToolCatalog = @(
     @{
         Name            = 'jq'
         Category        = 'Dev Tools'
-        Description     = 'Lightweight command-line JSON processor — essential for scripting against APIs'
+        Description     = 'Lightweight command-line JSON processor - essential for scripting against APIs'
         Manager         = 'scoop'
         PackageId       = 'jq'
         ScoopBucket     = 'main'
@@ -150,7 +150,7 @@ $ToolCatalog = @(
     @{
         Name            = 'yq'
         Category        = 'Dev Tools'
-        Description     = 'Command-line YAML/JSON/XML/CSV processor — like jq but for structured config files'
+        Description     = 'Command-line YAML/JSON/XML/CSV processor - like jq but for structured config files'
         Manager         = 'scoop'
         PackageId       = 'yq'
         ScoopBucket     = 'main'
@@ -162,7 +162,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Notepad++'
         Category        = 'Productivity'
-        Description     = 'Feature-rich text and code editor — tabs, macros, multi-cursor, plugin ecosystem'
+        Description     = 'Feature-rich text and code editor - tabs, macros, multi-cursor, plugin ecosystem'
         Manager         = 'winget'
         PackageId       = 'Notepad++.Notepad++'
         DefaultWork     = $true
@@ -171,7 +171,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Notepads App'
         Category        = 'Productivity'
-        Description     = 'Modern minimal notepad for quick notes — clean UX, tabbed'
+        Description     = 'Modern minimal notepad for quick notes - clean UX, tabbed'
         Manager         = 'winget'
         PackageId       = 'JamieOleary.Notepads'
         DefaultWork     = $true
@@ -181,7 +181,7 @@ $ToolCatalog = @(
     @{
         Name            = '7-Zip'
         Category        = 'Productivity'
-        Description     = 'File archiver and compression utility — handles ZIP, 7z, RAR, ISO, and more'
+        Description     = 'File archiver and compression utility - handles ZIP, 7z, RAR, ISO, and more'
         Manager         = 'winget'
         PackageId       = '7zip.7zip'
         DefaultWork     = $true
@@ -190,7 +190,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Snipaste'
         Category        = 'Productivity'
-        Description     = 'Screen capture, recording, and annotation — scrolling capture, OCR, upload workflows'
+        Description     = 'Screen capture, recording, and annotation - scrolling capture, OCR, upload workflows'
         Manager         = 'winget'
         PackageId       = 'liule.Snipaste'
         DefaultWork     = $true
@@ -201,7 +201,7 @@ $ToolCatalog = @(
     @{
         Name            = 'VLC'
         Category        = 'Media & Graphics'
-        Description     = 'Universal media player — plays virtually any format without extra codecs'
+        Description     = 'Universal media player - plays virtually any format without extra codecs'
         Manager         = 'winget'
         PackageId       = 'VideoLAN.VLC'
         DefaultWork     = $false
@@ -221,7 +221,7 @@ $ToolCatalog = @(
     @{
         Name            = 'WinSCP'
         Category        = 'File Management'
-        Description     = 'SFTP, FTP, S3, SCP, and WebDAV client — built-in scripting support'
+        Description     = 'SFTP, FTP, S3, SCP, and WebDAV client - built-in scripting support'
         Manager         = 'winget'
         PackageId       = 'WinSCP.WinSCP'
         DefaultWork     = $true
@@ -230,7 +230,7 @@ $ToolCatalog = @(
     @{
         Name            = 'FileZilla'
         Category        = 'File Management'
-        Description     = 'FTP/SFTP/FTPS client — reliable fallback when WinSCP is not enough'
+        Description     = 'FTP/SFTP/FTPS client - reliable fallback when WinSCP is not enough'
         Manager         = 'choco'
         PackageId       = 'filezilla'
         DefaultWork     = $false
@@ -239,7 +239,7 @@ $ToolCatalog = @(
     @{
         Name            = 'WizTree'
         Category        = 'File Management'
-        Description     = 'Disk space analyzer — reads the MFT directly, results in seconds on any drive size'
+        Description     = 'Disk space analyzer - reads the MFT directly, results in seconds on any drive size'
         Manager         = 'winget'
         PackageId       = 'AntibodySoftware.WizTree'
         DefaultWork     = $true
@@ -250,7 +250,7 @@ $ToolCatalog = @(
     @{
         Name            = 'SysInternals Suite'
         Category        = 'Admin & Security Tools'
-        Description     = 'Complete Microsoft Sysinternals toolkit — Process Explorer, PsExec, AutoRuns, TCPView, and 70+ more'
+        Description     = 'Complete Microsoft Sysinternals toolkit - Process Explorer, PsExec, AutoRuns, TCPView, and 70+ more'
         Manager         = 'winget'
         PackageId       = 'Microsoft.Sysinternals.Suite'
         DefaultWork     = $true
@@ -268,7 +268,7 @@ $ToolCatalog = @(
     @{
         Name            = 'OpenSSL for Windows'
         Category        = 'Admin & Security Tools'
-        Description     = 'OpenSSL binaries — CSR generation, cert inspection, key operations, TLS debugging'
+        Description     = 'OpenSSL binaries - CSR generation, cert inspection, key operations, TLS debugging'
         Manager         = 'winget'
         PackageId       = 'ShiningLight.OpenSSL'
         DefaultWork     = $true
@@ -277,7 +277,7 @@ $ToolCatalog = @(
     @{
         Name            = 'LockHunter'
         Category        = 'Admin & Security Tools'
-        Description     = 'Find what process is locking a file or folder — unlock and delete without rebooting'
+        Description     = 'Find what process is locking a file or folder - unlock and delete without rebooting'
         Manager         = 'winget'
         PackageId       = 'Crystal.LockHunter'
         DefaultWork     = $true
@@ -286,7 +286,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Rufus'
         Category        = 'Admin & Security Tools'
-        Description     = 'Bootable USB drive creator — fast, reliable, supports Windows and Linux ISOs'
+        Description     = 'Bootable USB drive creator - fast, reliable, supports Windows and Linux ISOs'
         Manager         = 'winget'
         PackageId       = 'Rufus.Rufus'
         DefaultWork     = $true
@@ -295,7 +295,7 @@ $ToolCatalog = @(
     @{
         Name            = 'LGPO'
         Category        = 'Admin & Security Tools'
-        Description     = 'Microsoft Local Group Policy Object utility — apply/export/import GPO settings on non-domain machines'
+        Description     = 'Microsoft Local Group Policy Object utility - apply/export/import GPO settings on non-domain machines'
         Manager         = 'manual'
         PackageId       = 'https://www.microsoft.com/en-us/download/details.aspx?id=55319'
         DefaultWork     = $false
@@ -327,7 +327,7 @@ $ToolCatalog = @(
     @{
         Name            = 'PuTTY'
         Category        = 'Network Tools'
-        Description     = 'Classic SSH and Telnet client — included as a lightweight fallback'
+        Description     = 'Classic SSH and Telnet client - included as a lightweight fallback'
         Manager         = 'winget'
         PackageId       = 'PuTTY.PuTTY'
         DefaultWork     = $false
@@ -336,7 +336,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Nmap'
         Category        = 'Network Tools'
-        Description     = 'Network discovery and port scanning — includes Zenmap GUI and Nping'
+        Description     = 'Network discovery and port scanning - includes Zenmap GUI and Nping'
         Manager         = 'winget'
         PackageId       = 'Insecure.Nmap'
         DefaultWork     = $false
@@ -345,7 +345,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Wireshark'
         Category        = 'Network Tools'
-        Description     = 'Network protocol analyzer — deep packet inspection and capture'
+        Description     = 'Network protocol analyzer - deep packet inspection and capture'
         Manager         = 'winget'
         PackageId       = 'WiresharkFoundation.Wireshark'
         DefaultWork     = $false
@@ -354,7 +354,7 @@ $ToolCatalog = @(
     @{
         Name            = 'PortQryUI'
         Category        = 'Network Tools'
-        Description     = 'GUI front-end for PortQry — test TCP/UDP port connectivity and query service endpoints'
+        Description     = 'GUI front-end for PortQry - test TCP/UDP port connectivity and query service endpoints'
         Manager         = 'manual'
         PackageId       = 'https://www.microsoft.com/en-us/download/details.aspx?id=24009'
         DefaultWork     = $false
@@ -366,7 +366,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Azure CLI'
         Category        = 'Azure & Cloud Tools'
-        Description     = 'az command-line interface for managing Azure resources — subscriptions, VMs, networking, storage'
+        Description     = 'az command-line interface for managing Azure resources - subscriptions, VMs, networking, storage'
         Manager         = 'winget'
         PackageId       = 'Microsoft.AzureCLI'
         DefaultWork     = $true
@@ -375,7 +375,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Azure Storage Explorer'
         Category        = 'Azure & Cloud Tools'
-        Description     = 'GUI for Azure blobs, files, queues, tables, and Cosmos DB — upload, download, manage'
+        Description     = 'GUI for Azure blobs, files, queues, tables, and Cosmos DB - upload, download, manage'
         Manager         = 'winget'
         PackageId       = 'Microsoft.AzureStorageExplorer'
         DefaultWork     = $true
@@ -395,7 +395,7 @@ $ToolCatalog = @(
     @{
         Name            = 'RVTools'
         Category        = 'Virtualization & Remote'
-        Description     = 'VMware/vSphere inventory and health reporting — exports full VM, host, and datastore details to Excel'
+        Description     = 'VMware/vSphere inventory and health reporting - exports full VM, host, and datastore details to Excel'
         Manager         = 'winget'
         PackageId       = 'RobWare.RVTools'
         DefaultWork     = $true
@@ -413,12 +413,22 @@ $ToolCatalog = @(
         DefaultPersonal = $true
         Notes           = 'Microsoft Store app ID'
     },
+    @{
+        Name            = 'Claude'
+        Category        = 'AI Tools'
+        Description     = 'Claude desktop application'
+        Manager         = 'winget'
+        PackageId       = 'Anthropic.Claude'
+        DefaultWork     = $false
+        DefaultPersonal = $true
+        Notes           = 'Microsoft Store app ID'
+    },
 
     # ── PowerShell Modules ────────────────────────────────────────────────────
     @{
         Name            = 'Az (Azure PowerShell)'
         Category        = 'PowerShell Modules'
-        Description     = 'Azure PowerShell module — manage all Azure services: Compute, Networking, Storage, RBAC, Key Vault'
+        Description     = 'Azure PowerShell module - manage all Azure services: Compute, Networking, Storage, RBAC, Key Vault'
         Manager         = 'psgallery'
         PackageId       = 'Az'
         DefaultWork     = $true
@@ -427,7 +437,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Microsoft Graph SDK'
         Category        = 'PowerShell Modules'
-        Description     = 'MS Graph PowerShell — Intune, Entra ID (Azure AD), Exchange Online, Teams, SharePoint via Graph API'
+        Description     = 'MS Graph PowerShell - Intune, Entra ID (Azure AD), Exchange Online, Teams, SharePoint via Graph API'
         Manager         = 'psgallery'
         PackageId       = 'Microsoft.Graph'
         DefaultWork     = $true
@@ -446,7 +456,7 @@ $ToolCatalog = @(
     @{
         Name            = 'Posh-SSH'
         Category        = 'PowerShell Modules'
-        Description     = 'SSH and SFTP sessions directly from PowerShell — useful for scripting against Linux/network gear'
+        Description     = 'SSH and SFTP sessions directly from PowerShell - useful for scripting against Linux/network gear'
         Manager         = 'psgallery'
         PackageId       = 'Posh-SSH'
         DefaultWork     = $false
@@ -455,7 +465,7 @@ $ToolCatalog = @(
     @{
         Name            = 'PSWindowsUpdate'
         Category        = 'PowerShell Modules'
-        Description     = 'Manage Windows Update from PowerShell — Get, install, and schedule updates via script'
+        Description     = 'Manage Windows Update from PowerShell - Get, install, and schedule updates via script'
         Manager         = 'psgallery'
         PackageId       = 'PSWindowsUpdate'
         DefaultWork     = $true
@@ -466,7 +476,7 @@ $ToolCatalog = @(
     @{
         Name            = 'RSAT: Active Directory'
         Category        = 'Windows Features'
-        Description     = 'ADUC, ADSI Edit, Sites & Services, Schema snap-in — full AD DS and AD LDS management'
+        Description     = 'ADUC, ADSI Edit, Sites & Services, Schema snap-in - full AD DS and AD LDS management'
         Manager         = 'feature'
         PackageId       = 'Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0'
         DefaultWork     = $true
@@ -475,7 +485,7 @@ $ToolCatalog = @(
     @{
         Name            = 'RSAT: Certificate Services'
         Category        = 'Windows Features'
-        Description     = 'Certificate Authority MMC snap-in — issue, revoke, and manage certs on enterprise CA'
+        Description     = 'Certificate Authority MMC snap-in - issue, revoke, and manage certs on enterprise CA'
         Manager         = 'feature'
         PackageId       = 'Rsat.CertificateServices.Tools~~~~0.0.1.0'
         DefaultWork     = $true
