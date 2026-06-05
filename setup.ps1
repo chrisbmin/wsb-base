@@ -41,26 +41,18 @@ param(
 
 # ── Banner ────────────────────────────────────────────────────────────────────
 
-Write-Host ("=" * 111) -ForegroundColor White -BackgroundColor Black
-$text = "
-__        __         _    ____  _        _   _               ____        _ _     _              ___        ______  ______
-\ \      / ___  _ __| | _/ ___|| |_ __ _| |_(_) ___  _ __   | __ ) _   _(_| | __| | ___ _ __   / \ \      / / ___|| __ \ \
- \ \ /\ / / _ \| '__| |/ \___ \| __/ _  | __| |/ _ \| '_ \  |  _ \| | | | | |/ _  |/ _ | '__| | | \ \ /\ / /\___ \|  _ \| |
-  \ V  V | (_) | |  |   < ___) | || (_| | |_| | (_) | | | | | |_) | |_| | | | (_| |  __| |    | |  \ V  V /  ___) | |_) | |
-   \_/\_/ \___/|_|  |_|\_|____/ \__\__,_|\__|_|\___/|_| |_| |____/ \__,_|_|_|\__,_|\___|_|    | |   \_/\_/  |____/|____/| |
-                                                                                               \_\                     /_/ "
-for ($i = 0; $i -lt $text.Length; $i++) {
-    switch ($i % 6) {
-        0 { $c = 'Yellow' }
-        2 { $c = 'Green'  }
-        4 { $c = 'Blue'   }
-        default { $c = 'Cyan' }
-    }
-    Write-Host $text[$i] -NoNewline -ForegroundColor $c
-}
-Write-Host "`n"
-Write-Host ("=" * 111) -ForegroundColor White -BackgroundColor Black
-Write-Host ""
+Write-Host ('=' * 45) -ForegroundColor DarkGray
+Write-Host ''
+Write-Host '    __        __   ____  ____  ' -ForegroundColor Yellow
+Write-Host '    \ \      / /  / ___|| __ ) ' -ForegroundColor Cyan
+Write-Host '     \ \ /\ / /   \___ \|  _ \ ' -ForegroundColor Green
+Write-Host '      \ V  V /     ___) || |_) |' -ForegroundColor Cyan
+Write-Host '       \_/\_/     |____/ |____/ ' -ForegroundColor Blue
+Write-Host ''
+Write-Host '       WorkStation Builder' -ForegroundColor White
+Write-Host ''
+Write-Host ('=' * 45) -ForegroundColor DarkGray
+Write-Host ''
 
 # ── Admin check ───────────────────────────────────────────────────────────────
 
