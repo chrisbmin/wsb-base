@@ -176,12 +176,14 @@ Write-Host ""
 Write-Host "  Scoop..." -ForegroundColor DarkGray
 if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
     try {
-        Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-        # -RunAsAdmin is required when the session is elevated; officially supported by Scoop
-        Invoke-Expression "& {$(Invoke-RestMethod -Uri 'https://get.scoop.sh')} -RunAsAdmin"
+        Set-ExecutionPolicy RemoteSigned -Scope Process -Force
+        # Fetch installer first, then invoke as a scriptblock to avoid nested-IEX parse issues.
+        # -RunAsAdmin bypasses Scoop's elevated-session guard (officially supported).
+        $scoopScript = Invoke-RestMethod -Uri 'https://get.scoop.sh'
+        & ([scriptblock]::Create($scoopScript)) -RunAsAdmin
         Write-Host "  Scoop installed." -ForegroundColor Green
     } catch {
-        Write-Host "  [!] Scoop install failed: $_" -ForegroundColor Yellow -BackgroundColor Red
+        Write-Host "  [!] Scoop install failed: $_" -ForegroundColor Red
     }
 } else {
     Write-Host "  Scoop already present." -ForegroundColor DarkGray
