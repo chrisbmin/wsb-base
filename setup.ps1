@@ -25,11 +25,11 @@ param(
 
 Write-Host ('=' * 30) -ForegroundColor DarkGray
 Write-Host ''
-Write-Host '  ##   ##  #######  ######  ' -ForegroundColor Yellow
-Write-Host '  ##   ##  ##       ##   ## ' -ForegroundColor Cyan
-Write-Host '  ## # ##  #####    ######  ' -ForegroundColor Green
-Write-Host '  ###  ##  ##       ##   ## ' -ForegroundColor Cyan
-Write-Host '  ##   ##  #######  ######  ' -ForegroundColor Blue
+Write-Host '  ##     ##  #######  #### ' -ForegroundColor Yellow
+Write-Host '  ##     ##  ##       ## ##' -ForegroundColor Cyan
+Write-Host '  ##  #  ##  #######  #### ' -ForegroundColor Green
+Write-Host '  ## # # ##       ##  ## ##' -ForegroundColor Cyan
+Write-Host '  ### # ###  #######  #### ' -ForegroundColor Blue
 Write-Host ''
 Write-Host '    WorkStation Builder' -ForegroundColor White
 Write-Host ''
@@ -181,7 +181,7 @@ if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
         Invoke-Expression "& {$(Invoke-RestMethod -Uri 'https://get.scoop.sh')} -RunAsAdmin"
         Write-Host "  Scoop installed." -ForegroundColor Green
     } catch {
-        Write-Host "  [!] Scoop install failed: $_" -ForegroundColor Red
+        Write-Host "  [!] Scoop install failed: $_" -ForegroundColor Yellow -BackgroundColor Red
     }
 } else {
     Write-Host "  Scoop already present." -ForegroundColor DarkGray
