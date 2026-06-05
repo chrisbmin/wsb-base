@@ -190,12 +190,18 @@ function Show-ToolMenu {
         $wc    = [System.Net.WebClient]::new()
         $bytes = $wc.DownloadData('https://cdn.chrisbmn.com/static/favicon/favicon-96x96.png')
         $ms    = [System.IO.MemoryStream]::new($bytes)
-        # PngBitmapDecoder with PreservePixelFormat keeps the alpha channel intact
-        $bmp   = [System.Windows.Media.Imaging.PngBitmapDecoder]::new(
+        $src   = [System.Windows.Media.Imaging.PngBitmapDecoder]::new(
                      $ms,
                      [System.Windows.Media.Imaging.BitmapCreateOptions]::PreservePixelFormat,
                      [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad
                  ).Frames[0]
+        # Convert to Pbgra32 (premultiplied BGRA) so WPF composites transparent pixels correctly
+        $bmp = [System.Windows.Media.Imaging.FormatConvertedBitmap]::new(
+                   $src,
+                   [System.Windows.Media.PixelFormats]::Pbgra32,
+                   $null, 0
+               )
+        $bmp.Freeze()
         $headerLogo.Source = $bmp
         $window.Icon       = $bmp
     } catch { }
@@ -220,13 +226,13 @@ function Show-ToolMenu {
         $catLabel.Foreground = $conv.ConvertFromString('#f38ba8')
         $catLabel.Margin     = [System.Windows.Thickness]::new(0, 20, 0, 4)
         $catLabel.Tag        = "cat:$cat"
-        $toolsPanel.Children.Add($catLabel)
+        [void]$toolsPanel.Children.Add($catLabel)
 
         $sep            = [System.Windows.Controls.Separator]::new()
         $sep.Background = $conv.ConvertFromString('#313244')
         $sep.Margin     = [System.Windows.Thickness]::new(0, 0, 0, 6)
         $sep.Tag        = "cat:$cat"
-        $toolsPanel.Children.Add($sep)
+        [void]$toolsPanel.Children.Add($sep)
 
         foreach ($item in $catItems) {
             # Row wrapper — Tag is the searchable text
@@ -265,8 +271,8 @@ function Show-ToolMenu {
                 $mgrBlock.Foreground  = $conv.ConvertFromString('#45475a')
             }
 
-            $nameRow.Children.Add($nameBlock)
-            $nameRow.Children.Add($mgrBlock)
+            [void]$nameRow.Children.Add($nameBlock)
+            [void]$nameRow.Children.Add($mgrBlock)
 
             if ($item.Tool.Notes) {
                 $noteTag                   = [System.Windows.Controls.TextBlock]::new()
@@ -276,9 +282,9 @@ function Show-ToolMenu {
                 $noteTag.Foreground        = $conv.ConvertFromString('#f9e2af')
                 $noteTag.VerticalAlignment = [System.Windows.VerticalAlignment]::Center
                 $noteTag.ToolTip           = $item.Tool.Notes
-                $nameRow.Children.Add($noteTag)
+                [void]$nameRow.Children.Add($noteTag)
             }
-            $inner.Children.Add($nameRow)
+            [void]$inner.Children.Add($nameRow)
 
             # Line 2: description (smaller, muted)
             if ($item.Tool.Description) {
@@ -289,12 +295,12 @@ function Show-ToolMenu {
                 $descBlock.Foreground   = $conv.ConvertFromString('#585b70')
                 $descBlock.TextWrapping = [System.Windows.TextWrapping]::Wrap
                 $descBlock.Margin       = [System.Windows.Thickness]::new(0, 2, 0, 4)
-                $inner.Children.Add($descBlock)
+                [void]$inner.Children.Add($descBlock)
             }
 
             $cb.Content      = $inner
             $rowBorder.Child = $cb
-            $toolsPanel.Children.Add($rowBorder)
+            [void]$toolsPanel.Children.Add($rowBorder)
 
             $cb.Add_Checked({ Update-WsbCount })
             $cb.Add_Unchecked({ Update-WsbCount })
