@@ -58,6 +58,15 @@ $stateFile = Join-Path $buildRoot '.wsb-state.json'
 $taskName  = 'WSB-Resume'
 $isResume  = $false
 
+# Persistent log — survives the build folder being wiped/redownloaded and lets
+# you check what happened across the Windows-Update reboot even if the console
+# window closes before you can read an error on screen.
+$logDir  = "$env:ProgramData\WSB"
+$logFile = Join-Path $logDir 'wsb-log.txt'
+if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
+"[$( Get-Date -Format 'yyyy-MM-dd HH:mm:ss' )] WSB run started (resume file present: $(Test-Path $stateFile))" |
+    Out-File -FilePath $logFile -Append -Encoding UTF8
+
 if (Test-Path $stateFile) {
     Write-Host ""
     Write-Host "  Resuming WSB after Windows Update restart..." -ForegroundColor Cyan
@@ -149,6 +158,11 @@ if (-not $isResume -and -not $SkipUpdate) {
     Write-Host "  WINDOWS UPDATE" -ForegroundColor Yellow
     Write-Host "  ================================================================" -ForegroundColor DarkGray
 
+    # Pre-install the NuGet provider so Install-Module doesn't stop to prompt
+    # "Do you want PowerShellGet to install and import the NuGet provider now?"
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
     if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
         Install-Module -Name PSWindowsUpdate -Force -Scope CurrentUser | Out-Null
     }
@@ -169,18 +183,39 @@ if (-not $isResume -and -not $SkipUpdate) {
             BuildFolder  = $buildFolder
         } | ConvertTo-Json | Set-Content -Path $stateFile -Encoding UTF8
 
-        $userId    = "$env:USERDOMAIN\$env:USERNAME"
-        $action    = New-ScheduledTaskAction -Execute 'powershell.exe' `
-            -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$buildFolder\setup.ps1`""
-        $trigger   = New-ScheduledTaskTrigger -AtLogOn -User $userId
-        $principal = New-ScheduledTaskPrincipal -UserId $userId -LogonType Interactive -RunLevel Highest
-        $settings  = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
+        $resumeScheduled = $false
+        try {
+            $userId    = "$env:USERDOMAIN\$env:USERNAME"
+            $action    = New-ScheduledTaskAction -Execute 'powershell.exe' `
+                -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$buildFolder\setup.ps1`""
+            $trigger   = New-ScheduledTaskTrigger -AtLogOn -User $userId
+            $principal = New-ScheduledTaskPrincipal -UserId $userId -LogonType Interactive -RunLevel Highest
+            $settings  = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
 
-        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
-        Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null
+            Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
+            Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force -ErrorAction Stop | Out-Null
+
+            # Confirm it actually landed in Task Scheduler — Register-ScheduledTask
+            # can report success but silently fail to persist on some configurations.
+            if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
+                $resumeScheduled = $true
+            } else {
+                throw "Task registration reported success but '$taskName' is not present in Task Scheduler."
+            }
+        } catch {
+            Write-Host ""
+            Write-Host "  [!] Could not schedule automatic resume: $_" -ForegroundColor Red
+            "[$( Get-Date -Format 'yyyy-MM-dd HH:mm:ss' )] Resume scheduling failed: $_" | Out-File -FilePath $logFile -Append -Encoding UTF8
+        }
 
         Write-Host ""
-        Write-Host "  Restarting to finish installing updates — WSB will continue automatically once you log back in..." -ForegroundColor Yellow
+        if ($resumeScheduled) {
+            Write-Host "  Restarting to finish installing updates — WSB will continue automatically once you log back in..." -ForegroundColor Yellow
+        } else {
+            Write-Host "  Restarting to finish installing updates." -ForegroundColor Yellow
+            Write-Host "  Automatic resume could not be scheduled — after you log back in, re-run the same setup command." -ForegroundColor Yellow
+            Write-Host "  WSB will detect the saved state in $buildRoot and pick up right where it left off." -ForegroundColor DarkGray
+        }
         Start-Sleep -Seconds 5
         Restart-Computer -Force
         exit 0
@@ -203,7 +238,20 @@ if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
     try {
         Set-ExecutionPolicy Bypass -Scope Process -Force
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+        # The official installer is chatty (TLS notes, path setup, shim creation,
+        # etc.) — redirect all its streams to null so WSB's own output stays clean.
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')) *>&1 | Out-Null
+
+        # Refresh PATH/env vars in this session so `choco` works immediately —
+        # otherwise the installer just warns you to close and reopen your shell.
+        $chocoInstallDir = if ($env:ChocolateyInstall) { $env:ChocolateyInstall } else { "$env:ProgramData\chocolatey" }
+        $chocoProfile    = Join-Path $chocoInstallDir 'helpers\chocolateyProfile.psm1'
+        if (Test-Path $chocoProfile) {
+            Import-Module $chocoProfile -Force
+            Update-SessionEnvironment
+        }
+
         Write-Host "  Chocolatey installed." -ForegroundColor Green
     } catch {
         Write-Host "  [!] Chocolatey install failed: $_" -ForegroundColor Red

@@ -39,15 +39,19 @@ function Install-SelectedTools {
         foreach ($tool in $wingetTools) {
             Write-Step "Installing $($tool.Name)..."
             try {
-                $proc = Start-Process -FilePath 'winget' `
-                    -ArgumentList "install -e --accept-source-agreements --accept-package-agreements --id $($tool.PackageId)" `
-                    -Wait -PassThru -NoNewWindow
-                if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq -1978335189) {
+                # Invoke directly (rather than Start-Process) so winget's chatter —
+                # msstore source agreement notices, progress bars, "Found X" lines —
+                # is captured instead of spilling into WSB's console output. Only
+                # surfaced below if the install actually fails, for debugging.
+                $output   = & winget install -e --accept-source-agreements --accept-package-agreements --id $tool.PackageId 2>&1
+                $exitCode = $LASTEXITCODE
+                if ($exitCode -eq 0 -or $exitCode -eq -1978335189) {
                     # -1978335189 = APPINSTALLER_ERROR_ALREADY_INSTALLED
                     Write-OK $tool.Name
                     $results.Success.Add($tool.Name)
                 } else {
-                    Write-Fail "$($tool.Name) (exit code $($proc.ExitCode))"
+                    Write-Fail "$($tool.Name) (exit code $exitCode)"
+                    $output | ForEach-Object { Write-Info "$_" }
                     $results.Failed.Add($tool.Name)
                 }
             } catch {
