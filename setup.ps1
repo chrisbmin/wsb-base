@@ -49,6 +49,37 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 
 Set-ExecutionPolicy RemoteSigned -Scope Process -Force
 
+# ── Resume detection ──────────────────────────────────────────────────────────
+# Windows Update runs first; if it installs updates, WSB schedules itself to
+# relaunch at next logon and reboots. On that second pass it picks up here,
+# restoring the choices captured before the reboot and skipping straight to
+# package managers / settings / debloat / the tool menu.
+
+$buildRoot = "$env:SystemDrive\build"
+$stateFile = Join-Path $buildRoot '.wsb-state.json'
+$taskName  = 'WSB-Resume'
+$isResume  = $false
+
+if (Test-Path $stateFile) {
+    Write-Host ""
+    Write-Host "  Resuming WSB after Windows Update restart..." -ForegroundColor Cyan
+
+    $state        = Get-Content $stateFile -Raw | ConvertFrom-Json
+    $WsbProfile   = $state.WsbProfile
+    $ToolboxPath  = $state.ToolboxPath
+    $SkipSettings = [bool]$state.SkipSettings
+    $SkipDebloat  = [bool]$state.SkipDebloat
+    $buildFolder  = $state.BuildFolder
+    $isResume     = $true
+
+    Remove-Item $stateFile -Force -ErrorAction SilentlyContinue
+    Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
+}
+
+if (-not $isResume) {
+    $buildFolder = Join-Path $buildRoot 'wsb-base-main'
+}
+
 # ── Internet check ────────────────────────────────────────────────────────────
 
 Write-Host "  Checking internet connectivity..." -ForegroundColor DarkGray
@@ -62,76 +93,134 @@ try {
 
 # ── Profile selection ─────────────────────────────────────────────────────────
 
-if ($WsbProfile -ne '' -and $WsbProfile -notin @('work','personal')) {
-    Write-Host "  [!] Invalid -WsbProfile '$WsbProfile'. Must be 'work' or 'personal'." -ForegroundColor Red
-    exit 1
-}
+if (-not $isResume) {
+    if ($WsbProfile -ne '' -and $WsbProfile -notin @('work','personal')) {
+        Write-Host "  [!] Invalid -WsbProfile '$WsbProfile'. Must be 'work' or 'personal'." -ForegroundColor Red
+        exit 1
+    }
 
-# Support env var fallback for irm | iex usage (can't pass params to piped scripts)
-if ($WsbProfile -eq '' -and $env:WSB_PROFILE -in 'work','personal') {
-    $WsbProfile = $env:WSB_PROFILE
-}
+    # Support env var fallback for irm | iex usage (can't pass params to piped scripts)
+    if ($WsbProfile -eq '' -and $env:WSB_PROFILE -in 'work','personal') {
+        $WsbProfile = $env:WSB_PROFILE
+    }
 
-if ($WsbProfile -eq '') {
+    if ($WsbProfile -eq '') {
+        Write-Host ""
+        Write-Host "  Select a profile to pre-populate tool defaults:" -ForegroundColor Yellow
+        Write-Host "    1  Work       (sysadmin stack: RSAT, Azure, Nutanix tools, admin utilities)" -ForegroundColor White
+        Write-Host "    2  Personal   (everyday tools: browsers, media, productivity)" -ForegroundColor White
+        Write-Host ""
+        do {
+            $choice = Read-Host "  Enter 1 or 2"
+        } until ($choice -in '1','2')
+        $WsbProfile = if ($choice -eq '1') { 'work' } else { 'personal' }
+    }
+
     Write-Host ""
-    Write-Host "  Select a profile to pre-populate tool defaults:" -ForegroundColor Yellow
-    Write-Host "    1  Work       (sysadmin stack: RSAT, Azure, Nutanix tools, admin utilities)" -ForegroundColor White
-    Write-Host "    2  Personal   (everyday tools: browsers, media, productivity)" -ForegroundColor White
-    Write-Host ""
-    do {
-        $choice = Read-Host "  Enter 1 or 2"
-    } until ($choice -in '1','2')
-    $WsbProfile = if ($choice -eq '1') { 'work' } else { 'personal' }
+    Write-Host "  Profile: " -ForegroundColor DarkGray -NoNewline
+    Write-Host $WsbProfile.ToUpper() -ForegroundColor Cyan
 }
-
-Write-Host ""
-Write-Host "  Profile: " -ForegroundColor DarkGray -NoNewline
-Write-Host $WsbProfile.ToUpper() -ForegroundColor Cyan
 
 # ── Toolbox path ──────────────────────────────────────────────────────────────
 
-Write-Host ""
-if ($ToolboxPath -ne '') {
-    Write-Host "  Toolbox folder: " -ForegroundColor DarkGray -NoNewline
-    Write-Host $ToolboxPath -ForegroundColor Cyan
-    Write-Host "  (Press Enter to accept, type a new path, or type SKIP to skip toolbox setup)" -ForegroundColor DarkGray
-    $tbInput = Read-Host "  >"
-    if ($tbInput.Trim().ToUpper() -eq 'SKIP') {
-        $ToolboxPath = ''
-        Write-Host "  Toolbox setup skipped." -ForegroundColor DarkGray
-    } elseif ($tbInput.Trim() -ne '') {
-        $ToolboxPath = $tbInput.Trim()
+if (-not $isResume) {
+    Write-Host ""
+    if ($ToolboxPath -ne '') {
+        Write-Host "  Toolbox folder: " -ForegroundColor DarkGray -NoNewline
+        Write-Host $ToolboxPath -ForegroundColor Cyan
+        Write-Host "  (Press Enter to accept, type a new path, or type SKIP to skip toolbox setup)" -ForegroundColor DarkGray
+        $tbInput = Read-Host "  >"
+        if ($tbInput.Trim().ToUpper() -eq 'SKIP') {
+            $ToolboxPath = ''
+            Write-Host "  Toolbox setup skipped." -ForegroundColor DarkGray
+        } elseif ($tbInput.Trim() -ne '') {
+            $ToolboxPath = $tbInput.Trim()
+        }
+    }
+
+    if ($ToolboxPath -ne '' -and -not (Test-Path $ToolboxPath)) {
+        Write-Host "  Creating toolbox folder: $ToolboxPath" -ForegroundColor DarkGray
+        New-Item -ItemType Directory -Path $ToolboxPath -Force | Out-Null
     }
 }
 
-if ($ToolboxPath -ne '' -and -not (Test-Path $ToolboxPath)) {
-    Write-Host "  Creating toolbox folder: $ToolboxPath" -ForegroundColor DarkGray
-    New-Item -ItemType Directory -Path $ToolboxPath -Force | Out-Null
-}
-
 # ── Download / refresh build archive ─────────────────────────────────────────
+# Needs to land on disk before Windows Update runs — if a reboot is required,
+# the resume task relaunches this same on-disk copy of setup.ps1.
 
-Write-Host ""
-Write-Host "  Downloading WSB repository..." -ForegroundColor DarkGray
+if (-not $isResume) {
+    Write-Host ""
+    Write-Host "  Downloading WSB repository..." -ForegroundColor DarkGray
 
-$buildRoot   = "$env:SystemDrive\build"
-$zipPath     = "$env:TEMP\wsb-base.zip"
-$repoUrl     = 'https://github.com/chrisbmin/wsb-base/archive/refs/heads/main.zip'
-$buildFolder = Join-Path $buildRoot 'wsb-base-main'
+    $zipPath = "$env:TEMP\wsb-base.zip"
+    $repoUrl = 'https://github.com/chrisbmin/wsb-base/archive/refs/heads/main.zip'
 
-if (Test-Path $buildRoot) {
-    Remove-Item $buildRoot -Recurse -Force
+    if (Test-Path $buildRoot) {
+        Remove-Item $buildRoot -Recurse -Force
+    }
+
+    try {
+        $wc = New-Object System.Net.WebClient
+        $wc.DownloadFile($repoUrl, $zipPath)
+        Expand-Archive -Path $zipPath -DestinationPath $buildRoot -Force
+        Remove-Item $zipPath -Force
+        Write-Host "  Repository ready at $buildFolder" -ForegroundColor Green
+    } catch {
+        Write-Host "  [!] Failed to download repository: $_" -ForegroundColor Red
+        exit 1
+    }
 }
 
-try {
-    $wc = New-Object System.Net.WebClient
-    $wc.DownloadFile($repoUrl, $zipPath)
-    Expand-Archive -Path $zipPath -DestinationPath $buildRoot -Force
-    Remove-Item $zipPath -Force
-    Write-Host "  Repository ready at $buildFolder" -ForegroundColor Green
-} catch {
-    Write-Host "  [!] Failed to download repository: $_" -ForegroundColor Red
-    exit 1
+# ── Windows Update ────────────────────────────────────────────────────────────
+# Runs first so the rest of the build lands on a fully patched system. If
+# updates are installed, WSB schedules itself to resume at next logon and
+# restarts now — everything below only executes once on an up-to-date machine.
+
+if (-not $isResume -and -not $SkipUpdate) {
+    Write-Host ""
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    Write-Host "  WINDOWS UPDATE" -ForegroundColor Yellow
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+
+    if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
+        Install-Module -Name PSWindowsUpdate -Force -Scope CurrentUser | Out-Null
+    }
+    Import-Module PSWindowsUpdate -Force -ErrorAction SilentlyContinue
+
+    Write-Host "  Checking for updates (this may take a few minutes)..." -ForegroundColor DarkGray
+    $updates = Get-WindowsUpdate -AcceptAll -Install -IgnoreReboot -ErrorAction SilentlyContinue
+
+    if ($updates -and $updates.Count -gt 0) {
+        Write-Host "  $($updates.Count) update(s) installed." -ForegroundColor Green
+        Write-Host ""
+        Write-Host "  Scheduling WSB to resume automatically after restart..." -ForegroundColor DarkGray
+
+        @{
+            WsbProfile   = $WsbProfile
+            ToolboxPath  = $ToolboxPath
+            SkipSettings = [bool]$SkipSettings
+            SkipDebloat  = [bool]$SkipDebloat
+            BuildFolder  = $buildFolder
+        } | ConvertTo-Json | Set-Content -Path $stateFile -Encoding UTF8
+
+        $userId    = "$env:USERDOMAIN\$env:USERNAME"
+        $action    = New-ScheduledTaskAction -Execute 'powershell.exe' `
+            -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$buildFolder\setup.ps1`""
+        $trigger   = New-ScheduledTaskTrigger -AtLogOn -User $userId
+        $principal = New-ScheduledTaskPrincipal -UserId $userId -LogonType Interactive -RunLevel Highest
+        $settings  = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
+
+        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
+        Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null
+
+        Write-Host ""
+        Write-Host "  Restarting to finish installing updates — WSB will continue automatically once you log back in..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 5
+        Restart-Computer -Force
+        exit 0
+    } else {
+        Write-Host "  No updates available or already up to date." -ForegroundColor DarkGray
+    }
 }
 
 # ── Install package managers ──────────────────────────────────────────────────
@@ -204,7 +293,28 @@ foreach ($bucket in $ScoopBuckets) {
     scoop bucket add $bucket 2>&1 | Out-Null
 }
 
+# ── Windows settings & debloat ────────────────────────────────────────────────
+
+if (-not $SkipSettings) {
+    Write-Host ""
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    Write-Host "  APPLYING WINDOWS SETTINGS" -ForegroundColor Yellow
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    . "$buildFolder\scripts\SystemSettings.ps1"
+}
+
+if (-not $SkipDebloat) {
+    Write-Host ""
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    Write-Host "  REMOVING DEFAULT APPS" -ForegroundColor Yellow
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    . "$buildFolder\scripts\RemoveDefaultApps.ps1"
+}
+
 # ── Tool selection menu ───────────────────────────────────────────────────────
+# Shown last — by this point the machine is patched, package managers are
+# ready, and Windows settings/debloat are already applied, so the GUI is the
+# final interactive step before installing the chosen tools and restarting.
 
 . "$buildFolder\scripts\Menu.ps1"
 . "$buildFolder\scripts\Install.ps1"
@@ -227,47 +337,6 @@ if ($selectedTools.Count -eq 0) {
     Write-Host ""
     Write-Host "  Installing $($selectedTools.Count) selected tools..." -ForegroundColor Cyan
     $installResults = Install-SelectedTools -SelectedTools $selectedTools -ToolboxPath $ToolboxPath
-}
-
-# ── Windows settings & debloat ────────────────────────────────────────────────
-
-if (-not $SkipSettings) {
-    Write-Host ""
-    Write-Host "  ================================================================" -ForegroundColor DarkGray
-    Write-Host "  APPLYING WINDOWS SETTINGS" -ForegroundColor Yellow
-    Write-Host "  ================================================================" -ForegroundColor DarkGray
-    . "$buildFolder\scripts\SystemSettings.ps1"
-}
-
-if (-not $SkipDebloat) {
-    Write-Host ""
-    Write-Host "  ================================================================" -ForegroundColor DarkGray
-    Write-Host "  REMOVING DEFAULT APPS" -ForegroundColor Yellow
-    Write-Host "  ================================================================" -ForegroundColor DarkGray
-    . "$buildFolder\scripts\RemoveDefaultApps.ps1"
-}
-
-# ── Windows Update ────────────────────────────────────────────────────────────
-
-if (-not $SkipUpdate) {
-    Write-Host ""
-    Write-Host "  ================================================================" -ForegroundColor DarkGray
-    Write-Host "  WINDOWS UPDATE" -ForegroundColor Yellow
-    Write-Host "  ================================================================" -ForegroundColor DarkGray
-
-    if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
-        Install-Module -Name PSWindowsUpdate -Force -Scope CurrentUser | Out-Null
-    }
-    Import-Module PSWindowsUpdate -Force -ErrorAction SilentlyContinue
-
-    Write-Host "  Checking for updates (this may take a few minutes)..." -ForegroundColor DarkGray
-    $updates = Get-WindowsUpdate -AcceptAll -Install -IgnoreReboot -ErrorAction SilentlyContinue
-
-    if ($updates -and $updates.Count -gt 0) {
-        Write-Host "  $($updates.Count) update(s) installed." -ForegroundColor Green
-    } else {
-        Write-Host "  No updates available or already up to date." -ForegroundColor DarkGray
-    }
 }
 
 # ── Done ──────────────────────────────────────────────────────────────────────
