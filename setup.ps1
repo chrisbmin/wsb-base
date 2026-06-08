@@ -97,32 +97,9 @@ try {
     exit 1
 }
 
-# ── Toolbox path ──────────────────────────────────────────────────────────────
-
-if (-not $isResume) {
-    Write-Host ""
-    if ($ToolboxPath -ne '') {
-        Write-Host "  Toolbox folder: " -ForegroundColor DarkGray -NoNewline
-        Write-Host $ToolboxPath -ForegroundColor Cyan
-        Write-Host "  (Press Enter to accept, type a new path, or type SKIP to skip toolbox setup)" -ForegroundColor DarkGray
-        $tbInput = Read-Host "  >"
-        if ($tbInput.Trim().ToUpper() -eq 'SKIP') {
-            $ToolboxPath = ''
-            Write-Host "  Toolbox setup skipped." -ForegroundColor DarkGray
-        } elseif ($tbInput.Trim() -ne '') {
-            $ToolboxPath = $tbInput.Trim()
-        }
-    }
-
-    if ($ToolboxPath -ne '' -and -not (Test-Path $ToolboxPath)) {
-        Write-Host "  Creating toolbox folder: $ToolboxPath" -ForegroundColor DarkGray
-        New-Item -ItemType Directory -Path $ToolboxPath -Force | Out-Null
-    }
-}
-
 # ── Download / refresh build archive ─────────────────────────────────────────
-# Needs to land on disk before Windows Update runs — if a reboot is required,
-# the resume task relaunches this same on-disk copy of setup.ps1.
+# Downloaded first (before toolbox and Windows Update) so the on-disk copy of
+# setup.ps1 exists if a reboot is needed and the resume task must relaunch it.
 
 if (-not $isResume) {
     Write-Host ""
@@ -144,6 +121,44 @@ if (-not $isResume) {
     } catch {
         Write-Host "  [!] Failed to download repository: $_" -ForegroundColor Red
         exit 1
+    }
+}
+
+# ── Toolbox setup ─────────────────────────────────────────────────────────────
+
+if (-not $isResume) {
+    Write-Host ""
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    Write-Host "  TOOLBOX SETUP" -ForegroundColor Yellow
+    Write-Host "  ================================================================" -ForegroundColor DarkGray
+    Write-Host ""
+    Write-Host "  A toolbox folder holds portable tools (scripts, license files," -ForegroundColor DarkGray
+    Write-Host "  portable executables) and gets added to your PATH automatically." -ForegroundColor DarkGray
+    Write-Host ""
+
+    $tbChoice = Read-Host "  Set up a toolbox folder? [Y/N]"
+
+    if ($tbChoice.Trim() -match '^[Yy]') {
+        Write-Host ""
+        Write-Host "  Default path: " -ForegroundColor DarkGray -NoNewline
+        Write-Host $ToolboxPath -ForegroundColor Cyan
+        $tbInput = Read-Host "  Press Enter to accept or type a custom path"
+        if ($tbInput.Trim() -ne '') {
+            $ToolboxPath = $tbInput.Trim()
+        }
+
+        if (-not (Test-Path $ToolboxPath)) {
+            Write-Host "  Creating: $ToolboxPath" -ForegroundColor DarkGray
+            New-Item -ItemType Directory -Path $ToolboxPath -Force | Out-Null
+        } else {
+            Write-Host "  Folder already exists." -ForegroundColor DarkGray
+        }
+
+        . "$buildFolder\scripts\ToolboxSetup.ps1"
+        Initialize-Toolbox -Path $ToolboxPath
+    } else {
+        $ToolboxPath = ''
+        Write-Host "  Toolbox setup skipped." -ForegroundColor DarkGray
     }
 }
 
