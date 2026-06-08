@@ -192,8 +192,10 @@ function Install-SelectedTools {
 
     # ── Windows Features (RSAT) ──────────────────────────────────────────────
 
-    $featureTools = $SelectedTools | Where-Object { $_.Manager -eq 'feature' }
-    if ($featureTools) {
+    $featureTools  = $SelectedTools | Where-Object { $_.Manager -eq 'feature' }
+    $featureGroups = $SelectedTools | Where-Object { $_.Manager -eq 'feature-group' }
+
+    if ($featureTools -or $featureGroups) {
         Write-Host ""
         Write-Host "  ============================================================" -ForegroundColor DarkGray
         Write-Host "  WINDOWS FEATURES (RSAT)" -ForegroundColor Yellow
@@ -214,6 +216,31 @@ function Install-SelectedTools {
             } catch {
                 Write-Fail "$($tool.Name) - $_"
                 $results.Failed.Add($tool.Name)
+            }
+        }
+
+        # Group entries (e.g. "RSAT: All Tools") — PackageId is a wildcard pattern;
+        # enable every matching capability that isn't already installed.
+        foreach ($group in $featureGroups) {
+            Write-Step "Enabling: $($group.Name)..."
+            try {
+                $caps = Get-WindowsCapability -Online -Name $group.PackageId -ErrorAction Stop |
+                    Where-Object { $_.State -ne 'Installed' }
+
+                if (-not $caps) {
+                    Write-OK "$($group.Name) (already installed)"
+                    $results.Success.Add($group.Name)
+                } else {
+                    foreach ($cap in $caps) {
+                        Write-Info "Enabling $($cap.Name)..."
+                        Add-WindowsCapability -Online -Name $cap.Name -ErrorAction Stop | Out-Null
+                    }
+                    Write-OK "$($group.Name) ($($caps.Count) capabilities enabled)"
+                    $results.Success.Add($group.Name)
+                }
+            } catch {
+                Write-Fail "$($group.Name) - $_"
+                $results.Failed.Add($group.Name)
             }
         }
     }

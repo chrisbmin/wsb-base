@@ -155,7 +155,21 @@ $ToolCatalog = @(
         ScoopBucket     = 'main'
     },
 
-    # ── Productivity ─────────────────────────────────────────────────────────
+    # ── Productivity/Utilities ───────────────────────────────────────────────
+    @{
+        Name            = '1Password'
+        Category        = 'Productivity'
+        Description     = 'Security at the speed of life'
+        Manager         = 'winget'
+        PackageId       = 'AgileBits.1Password '
+    },
+    @{
+        Name            = 'LastPass for Desktop'
+        Category        = 'Productivity'
+        Description     = 'LastPass for Desktop - password manager and vault application'
+        Manager         = 'winget'
+        PackageId       = 'LastPass.LastPass'
+    },    
     @{
         Name            = 'Notepad++'
         Category        = 'Productivity'
@@ -454,5 +468,111 @@ $ToolCatalog = @(
         Description     = 'Failover Cluster Manager — manage Windows Server clusters and cluster-aware updating'
         Manager         = 'feature'
         PackageId       = 'Rsat.FailoverCluster.Management.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: BitLocker Recovery'
+        Category        = 'Windows Features'
+        Description     = 'BitLocker Recovery Password Viewer — read recovery keys from AD computer objects'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.BitLocker.Recovery.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: File Services'
+        Category        = 'Windows Features'
+        Description     = 'File Server Resource Manager and Services for NFS MMC snap-ins'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.FileServices.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: IP Address Management (IPAM) Client'
+        Category        = 'Windows Features'
+        Description     = 'IPAM console — manage IP address space, DNS, and DHCP from one place'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.IPAM.Client.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: LLDP Tools'
+        Category        = 'Windows Features'
+        Description     = 'Link Layer Discovery Protocol — view neighboring network device info'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.LLDP.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: Network Controller'
+        Category        = 'Windows Features'
+        Description     = 'PowerShell module for managing Network Controller in SDN deployments'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.NetworkController.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: Network Load Balancing'
+        Category        = 'Windows Features'
+        Description     = 'NLB Manager — configure and monitor Network Load Balancing clusters'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.NetworkLoadBalancing.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: Remote Access Management'
+        Category        = 'Windows Features'
+        Description     = 'Manage DirectAccess, VPN, and routing via Remote Access Management Console'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.RemoteAccess.Management.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: Server Manager'
+        Category        = 'Windows Features'
+        Description     = 'Server Manager console — manage roles, features, and remote servers'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.ServerManager.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: Shielded VM Tools'
+        Category        = 'Windows Features'
+        Description     = 'Manage Shielded VM templates and Host Guardian Service'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.Shielded.VM.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: Storage Migration Service'
+        Category        = 'Windows Features'
+        Description     = 'Storage Migration Service Management — orchestrate server storage migrations'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.StorageMigrationService.Management.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: Storage Replica'
+        Category        = 'Windows Features'
+        Description     = 'PowerShell module for configuring and monitoring Storage Replica'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.StorageReplica.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: System Insights'
+        Category        = 'Windows Features'
+        Description     = 'PowerShell module for System Insights predictive analytics capabilities'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.SystemInsights.Management.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: Volume Activation'
+        Category        = 'Windows Features'
+        Description     = 'Volume Activation Tools — manage KMS/MAK activation via VAMT'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.VolumeActivation.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: WSUS Tools'
+        Category        = 'Windows Features'
+        Description     = 'Windows Server Update Services console and PowerShell module'
+        Manager         = 'feature'
+        PackageId       = 'Rsat.WSUS.Tools~~~~0.0.1.0'
+    },
+    @{
+        Name            = 'RSAT: All Tools'
+        Category        = 'Windows Features'
+        Description     = 'Installs every RSAT capability above in one go — convenience option for full admin workstations'
+        Manager         = 'feature-group'
+        PackageId       = 'Rsat*'
+        Notes           = 'Enables all not-yet-installed Rsat.* Windows capabilities; selecting individual RSAT tools above is unnecessary if you pick this'
     }
 )
