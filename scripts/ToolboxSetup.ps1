@@ -61,6 +61,7 @@ function Initialize-Toolbox {
         'pscp.exe',       # SCP file transfer
         'psftp.exe',      # SFTP client
         'puttytel.exe'    # Telnet-only client
+        'pterm.exe'       # PuTTY-style wrapper for Windows command prompts
     )
     try {
         if (-not (Test-Path $puttyDest)) { New-Item -ItemType Directory -Path $puttyDest -Force | Out-Null }
