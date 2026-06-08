@@ -4,19 +4,17 @@
 
 function Show-ToolMenu {
     param(
-        [Parameter(Mandatory)] [array]  $Catalog,
-        [Parameter(Mandatory)] [string] $WsbProfile
+        [Parameter(Mandatory)] [array] $Catalog
     )
 
     Add-Type -AssemblyName PresentationFramework
     Add-Type -AssemblyName PresentationCore
     Add-Type -AssemblyName WindowsBase
 
-    # Build item state list
+    # Build item state list — nothing pre-selected; user picks what they want.
     $items = [System.Collections.Generic.List[PSCustomObject]]::new()
     foreach ($tool in $Catalog) {
-        $sel = if ($WsbProfile -eq 'work') { $tool.DefaultWork } else { $tool.DefaultPersonal }
-        $items.Add([PSCustomObject]@{ Tool = $tool; Selected = $sel })
+        $items.Add([PSCustomObject]@{ Tool = $tool; Selected = $false })
     }
     $categories = @($Catalog | ForEach-Object { $_.Category } | Select-Object -Unique)
 
@@ -24,8 +22,8 @@ function Show-ToolMenu {
     [xml]$xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="WorkStation Builder" Height="750" Width="1050"
-        MinHeight="500" MinWidth="700"
+        Title="WorkStation Builder" Height="820" Width="1300"
+        MinHeight="560" MinWidth="900"
         WindowStartupLocation="CenterScreen"
         Background="#1e1e2e">
   <Window.Resources>
@@ -33,10 +31,10 @@ function Show-ToolMenu {
     <Style TargetType="CheckBox">
       <Setter Property="Foreground" Value="#cdd6f4"/>
       <Setter Property="BorderBrush" Value="#585b70"/>
-      <Setter Property="Margin" Value="0,2,0,2"/>
+      <Setter Property="Margin" Value="0,3,16,3"/>
       <Setter Property="Padding" Value="8,0,0,0"/>
       <Setter Property="FontFamily" Value="Consolas"/>
-      <Setter Property="VerticalContentAlignment" Value="Top"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
     <Style TargetType="Button">
@@ -44,7 +42,7 @@ function Show-ToolMenu {
       <Setter Property="Foreground" Value="#cdd6f4"/>
       <Setter Property="BorderBrush" Value="#45475a"/>
       <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="Padding" Value="18,7"/>
+      <Setter Property="Padding" Value="14,8"/>
       <Setter Property="FontFamily" Value="Consolas"/>
       <Setter Property="FontSize" Value="13"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -78,83 +76,79 @@ function Show-ToolMenu {
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
-      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
     <!-- Header -->
     <Border Grid.Row="0" Background="#181825" Padding="24,14">
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto"/>
-          <ColumnDefinition Width="*"/>
-          <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <Image x:Name="HeaderLogo" Grid.Column="0" Width="48" Height="48"
-               Margin="0,0,16,0" VerticalAlignment="Center"
-               RenderOptions.BitmapScalingMode="HighQuality"/>
-        <StackPanel Grid.Column="1">
+      <StackPanel Orientation="Horizontal">
+        <Image x:Name="HeaderLogo" Width="40" Height="40" Margin="0,0,14,0"
+               VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
+        <StackPanel VerticalAlignment="Center">
           <TextBlock Text="WorkStation Builder" FontFamily="Consolas"
                      FontSize="20" FontWeight="Bold" Foreground="#cba6f7"/>
           <TextBlock Text="Check boxes to select tools, then click Install Selected."
                      FontFamily="Consolas" FontSize="12" Foreground="#585b70" Margin="0,4,0,0"/>
         </StackPanel>
-        <Border Grid.Column="2" Background="#313244" CornerRadius="6"
-                Padding="14,8" VerticalAlignment="Center">
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Profile: " FontFamily="Consolas" FontSize="12"
-                       Foreground="#585b70" VerticalAlignment="Center"/>
-            <TextBlock x:Name="ProfileLabel" FontFamily="Consolas" FontSize="12"
-                       FontWeight="Bold" Foreground="#a6e3a1" VerticalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Body: sidebar + tool grid -->
+    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="240"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- Sidebar -->
+      <Border Grid.Column="0" Background="#181825" Padding="18"
+              BorderBrush="#313244" BorderThickness="0,0,1,0">
+        <DockPanel LastChildFill="False">
+          <StackPanel DockPanel.Dock="Bottom">
+            <Button x:Name="BtnInstall" Content="Install Selected"
+                    Background="#a6e3a1" Foreground="#1e1e2e" FontWeight="Bold"
+                    BorderBrush="#a6e3a1" Margin="0,0,0,8" HorizontalAlignment="Stretch"/>
+            <Button x:Name="BtnCancel" Content="Cancel" HorizontalAlignment="Stretch"/>
           </StackPanel>
-        </Border>
-      </Grid>
-    </Border>
 
-    <!-- Search bar -->
-    <Border Grid.Row="1" Background="#1e1e2e" Padding="24,8,24,4">
-      <Grid>
-        <TextBox x:Name="SearchBox"/>
-        <TextBlock x:Name="SearchHint"
-                   Text="  Search by name, category, or description..."
-                   FontFamily="Consolas" FontSize="13" Foreground="#45475a"
-                   IsHitTestVisible="False" VerticalAlignment="Center"/>
-      </Grid>
-    </Border>
+          <StackPanel DockPanel.Dock="Top">
+          <TextBlock Text="SEARCH" FontFamily="Consolas" FontSize="11" FontWeight="Bold"
+                     Foreground="#f38ba8" Margin="0,0,0,6"/>
+          <Grid Margin="0,0,0,20">
+            <TextBox x:Name="SearchBox"/>
+            <TextBlock x:Name="SearchHint"
+                       Text="  name, category, description..."
+                       FontFamily="Consolas" FontSize="12" Foreground="#45475a"
+                       IsHitTestVisible="False" VerticalAlignment="Center"/>
+          </Grid>
 
-    <!-- Tool list -->
-    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Background="#1e1e2e">
-      <StackPanel x:Name="ToolsPanel" Margin="24,8,24,16"/>
-    </ScrollViewer>
+          <TextBlock Text="SELECTION" FontFamily="Consolas" FontSize="11" FontWeight="Bold"
+                     Foreground="#f38ba8" Margin="0,0,0,6"/>
+          <Button x:Name="BtnAll"  Content="Select All" Margin="0,0,0,8" HorizontalAlignment="Stretch"/>
+          <Button x:Name="BtnNone" Content="Clear All"  Margin="0,0,0,20" HorizontalAlignment="Stretch"/>
 
-    <!-- Footer -->
-    <Border Grid.Row="3" Background="#181825" BorderBrush="#313244"
-            BorderThickness="0,1,0,0" Padding="24,10">
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*"/>
-          <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-          <TextBlock Text="Selected: " FontFamily="Consolas" FontSize="13" Foreground="#585b70"/>
-          <TextBlock x:Name="SelectedCount" Text="0" FontFamily="Consolas"
-                     FontSize="13" FontWeight="Bold" Foreground="#a6e3a1"/>
-          <TextBlock x:Name="TotalCount" Text=" / 0" FontFamily="Consolas"
-                     FontSize="13" Foreground="#585b70"/>
-          <TextBlock Text="    * = notes    ! = manual install"
-                     FontFamily="Consolas" FontSize="11" Foreground="#45475a" VerticalAlignment="Center"/>
-        </StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal">
-          <Button x:Name="BtnAll"     Content="Select All"      Margin="0,0,8,0"/>
-          <Button x:Name="BtnNone"    Content="Clear All"       Margin="0,0,8,0"/>
-          <Button x:Name="BtnCancel"  Content="Cancel"          Margin="0,0,8,0"/>
-          <Button x:Name="BtnInstall" Content="Install Selected"
-                  Background="#a6e3a1" Foreground="#1e1e2e"
-                  FontWeight="Bold"    BorderBrush="#a6e3a1"/>
-        </StackPanel>
-      </Grid>
-    </Border>
+          <Border Background="#313244" CornerRadius="6" Padding="12,10" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <TextBlock Text="Selected: " FontFamily="Consolas" FontSize="13" Foreground="#585b70"/>
+              <TextBlock x:Name="SelectedCount" Text="0" FontFamily="Consolas"
+                         FontSize="13" FontWeight="Bold" Foreground="#a6e3a1"/>
+              <TextBlock x:Name="TotalCount" Text=" / 0" FontFamily="Consolas"
+                         FontSize="13" Foreground="#585b70"/>
+            </StackPanel>
+          </Border>
+
+          <TextBlock Text="* = notes (hover)&#10;! = manual install"
+                     FontFamily="Consolas" FontSize="11" Foreground="#45475a"
+                     TextWrapping="Wrap" Margin="0,0,0,20"/>
+          </StackPanel>
+        </DockPanel>
+      </Border>
+
+      <!-- Tool grid -->
+      <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Background="#1e1e2e">
+        <StackPanel x:Name="ToolsPanel" Margin="24,16,16,16"/>
+      </ScrollViewer>
+    </Grid>
   </Grid>
 </Window>
 '@
@@ -163,14 +157,13 @@ function Show-ToolMenu {
     $window = [Windows.Markup.XamlReader]::Load($reader)
 
     # Named control references
-    $toolsPanel    = $window.FindName('ToolsPanel')
-    $searchBox     = $window.FindName('SearchBox')
-    $searchHint    = $window.FindName('SearchHint')
-    $profileLabel  = $window.FindName('ProfileLabel')
-    $btnAll        = $window.FindName('BtnAll')
-    $btnNone       = $window.FindName('BtnNone')
-    $btnCancel     = $window.FindName('BtnCancel')
-    $btnInstall    = $window.FindName('BtnInstall')
+    $toolsPanel = $window.FindName('ToolsPanel')
+    $searchBox  = $window.FindName('SearchBox')
+    $searchHint = $window.FindName('SearchHint')
+    $btnAll     = $window.FindName('BtnAll')
+    $btnNone    = $window.FindName('BtnNone')
+    $btnCancel  = $window.FindName('BtnCancel')
+    $btnInstall = $window.FindName('BtnInstall')
 
     # Script-scope so event handler closures can reach them
     $script:wsbCount  = $window.FindName('SelectedCount')
@@ -182,7 +175,6 @@ function Show-ToolMenu {
     $script:wsbWindow = $window
 
     $script:wsbTotal.Text = " / $($items.Count)"
-    $profileLabel.Text    = $WsbProfile.ToUpper()
 
     # Load CB logo from CDN — sets header image + title bar icon (silently skipped if unreachable)
     $headerLogo = $window.FindName('HeaderLogo')
@@ -213,7 +205,7 @@ function Show-ToolMenu {
         $script:wsbCount.Text = "$n"
     }
 
-    # ── Build tool rows ──────────────────────────────────────────────────────────
+    # ── Build tool grid — one wrapping row of checkboxes per category ────────────
     foreach ($cat in $categories) {
         $catItems = $items | Where-Object { $_.Tool.Category -eq $cat }
 
@@ -224,88 +216,50 @@ function Show-ToolMenu {
         $catLabel.FontSize   = 11
         $catLabel.FontWeight = [System.Windows.FontWeights]::Bold
         $catLabel.Foreground = $conv.ConvertFromString('#f38ba8')
-        $catLabel.Margin     = [System.Windows.Thickness]::new(0, 20, 0, 4)
+        $catLabel.Margin     = [System.Windows.Thickness]::new(0, 16, 0, 4)
         $catLabel.Tag        = "cat:$cat"
         [void]$toolsPanel.Children.Add($catLabel)
 
         $sep            = [System.Windows.Controls.Separator]::new()
         $sep.Background = $conv.ConvertFromString('#313244')
-        $sep.Margin     = [System.Windows.Thickness]::new(0, 0, 0, 6)
+        $sep.Margin     = [System.Windows.Thickness]::new(0, 0, 16, 6)
         $sep.Tag        = "cat:$cat"
         [void]$toolsPanel.Children.Add($sep)
 
-        foreach ($item in $catItems) {
-            # Row wrapper — Tag is the searchable text
-            $rowBorder        = [System.Windows.Controls.Border]::new()
-            $rowBorder.Margin = [System.Windows.Thickness]::new(0, 1, 0, 1)
-            $rowBorder.Tag    = "$($item.Tool.Name) $($item.Tool.Description) $($item.Tool.Category)"
+        $wrap      = [System.Windows.Controls.WrapPanel]::new()
+        $wrap.Tag  = "cat:$cat"
+        $wrap.Margin = [System.Windows.Thickness]::new(0, 0, 0, 4)
+        [void]$toolsPanel.Children.Add($wrap)
 
+        foreach ($item in $catItems) {
             $cb           = [System.Windows.Controls.CheckBox]::new()
             $cb.IsChecked = $item.Selected
+            $cb.Width     = 230
+            $cb.Tag       = "$($item.Tool.Name) $($item.Tool.Description) $($item.Tool.Category)"
 
-            # Inner stack: name line + description line
-            $inner = [System.Windows.Controls.StackPanel]::new()
+            $label             = [System.Windows.Controls.TextBlock]::new()
+            $label.FontFamily  = [System.Windows.Media.FontFamily]::new('Consolas')
+            $label.FontSize    = 13
+            $label.TextTrimming = [System.Windows.TextTrimming]::CharacterEllipsis
 
-            # Line 1: tool name + manager tag (+ notes marker)
-            $nameRow             = [System.Windows.Controls.StackPanel]::new()
-            $nameRow.Orientation = [System.Windows.Controls.Orientation]::Horizontal
+            $isManual = $item.Tool.Manager -eq 'manual'
+            $label.Text       = if ($isManual) { "$($item.Tool.Name) !" } else { $item.Tool.Name }
+            $label.Foreground = if ($isManual) { $conv.ConvertFromString('#f9e2af') } else { $conv.ConvertFromString('#cdd6f4') }
 
-            $nameBlock            = [System.Windows.Controls.TextBlock]::new()
-            $nameBlock.FontFamily = [System.Windows.Media.FontFamily]::new('Consolas')
-            $nameBlock.FontSize   = 13
-            $nameBlock.Text       = $item.Tool.Name
+            # Tooltip carries the detail that no longer fits inline — description, manager, notes
+            $tooltipLines = [System.Collections.Generic.List[string]]::new()
+            if ($item.Tool.Description) { [void]$tooltipLines.Add($item.Tool.Description) }
+            $tooltipLines.Add("Manager: $($item.Tool.Manager)")
+            if ($item.Tool.Notes) { [void]$tooltipLines.Add("Note: $($item.Tool.Notes)") }
+            $cb.ToolTip = [string]::Join("`n", $tooltipLines)
 
-            $mgrBlock            = [System.Windows.Controls.TextBlock]::new()
-            $mgrBlock.FontFamily = [System.Windows.Media.FontFamily]::new('Consolas')
-            $mgrBlock.FontSize   = 11
-            $mgrBlock.VerticalAlignment = [System.Windows.VerticalAlignment]::Center
-            $mgrBlock.Margin     = [System.Windows.Thickness]::new(8, 0, 0, 0)
-
-            if ($item.Tool.Manager -eq 'manual') {
-                $nameBlock.Foreground = $conv.ConvertFromString('#585b70')
-                $mgrBlock.Text        = '[manual !]'
-                $mgrBlock.Foreground  = $conv.ConvertFromString('#f9e2af')
-            } else {
-                $nameBlock.Foreground = $conv.ConvertFromString('#cdd6f4')
-                $mgrBlock.Text        = "[$($item.Tool.Manager)]"
-                $mgrBlock.Foreground  = $conv.ConvertFromString('#45475a')
-            }
-
-            [void]$nameRow.Children.Add($nameBlock)
-            [void]$nameRow.Children.Add($mgrBlock)
-
-            if ($item.Tool.Notes) {
-                $noteTag                   = [System.Windows.Controls.TextBlock]::new()
-                $noteTag.FontFamily        = [System.Windows.Media.FontFamily]::new('Consolas')
-                $noteTag.FontSize          = 11
-                $noteTag.Text              = '  *'
-                $noteTag.Foreground        = $conv.ConvertFromString('#f9e2af')
-                $noteTag.VerticalAlignment = [System.Windows.VerticalAlignment]::Center
-                $noteTag.ToolTip           = $item.Tool.Notes
-                [void]$nameRow.Children.Add($noteTag)
-            }
-            [void]$inner.Children.Add($nameRow)
-
-            # Line 2: description (smaller, muted)
-            if ($item.Tool.Description) {
-                $descBlock              = [System.Windows.Controls.TextBlock]::new()
-                $descBlock.FontFamily   = [System.Windows.Media.FontFamily]::new('Consolas')
-                $descBlock.FontSize     = 11
-                $descBlock.Text         = $item.Tool.Description
-                $descBlock.Foreground   = $conv.ConvertFromString('#585b70')
-                $descBlock.TextWrapping = [System.Windows.TextWrapping]::Wrap
-                $descBlock.Margin       = [System.Windows.Thickness]::new(0, 2, 0, 4)
-                [void]$inner.Children.Add($descBlock)
-            }
-
-            $cb.Content      = $inner
-            $rowBorder.Child = $cb
-            [void]$toolsPanel.Children.Add($rowBorder)
+            $cb.Content = $label
+            [void]$wrap.Children.Add($cb)
 
             $cb.Add_Checked({ Update-WsbCount })
             $cb.Add_Unchecked({ Update-WsbCount })
 
-            $script:wsbBoxes.Add([PSCustomObject]@{ Item = $item; CB = $cb; Row = $rowBorder })
+            $script:wsbBoxes.Add([PSCustomObject]@{ Item = $item; CB = $cb; Row = $cb })
         }
     }
 
@@ -330,7 +284,7 @@ function Show-ToolMenu {
             }
         }
 
-        # Hide category headers when all their tools are filtered out
+        # Hide category headers (and their wrap panel) when all their tools are filtered out
         foreach ($cat in $script:wsbCats) {
             $anyVisible = ($script:wsbBoxes | Where-Object {
                 $_.Item.Tool.Category -eq $cat -and

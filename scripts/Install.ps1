@@ -5,7 +5,8 @@
 function Install-SelectedTools {
     param(
         [Parameter(Mandatory)] [array]  $SelectedTools,
-        [string] $ToolboxPath = ''
+        [string] $ToolboxPath  = '',
+        [array]  $ScoopBuckets = @()
     )
 
     $results = [PSCustomObject]@{
@@ -86,22 +87,64 @@ function Install-SelectedTools {
     }
 
     # ── Scoop ────────────────────────────────────────────────────────────────
+    # Scoop is opt-in. Bootstrap it (plus its git dependency) if the user picked
+    # it directly, or picked any tool that installs via Scoop.
 
-    $scoopTools = $SelectedTools | Where-Object { $_.Manager -eq 'scoop' }
-    if ($scoopTools) {
+    $scoopBootstrap = $SelectedTools | Where-Object { $_.Manager -eq 'scoop-bootstrap' }
+    $scoopTools     = $SelectedTools | Where-Object { $_.Manager -eq 'scoop' }
+
+    if ($scoopBootstrap -or $scoopTools) {
         Write-Host ""
         Write-Host "  ============================================================" -ForegroundColor DarkGray
-        Write-Host "  SCOOP PACKAGES" -ForegroundColor Yellow
+        Write-Host "  SCOOP" -ForegroundColor Yellow
         Write-Host "  ============================================================" -ForegroundColor DarkGray
 
-        # Add required buckets (deduplicated)
-        $requiredBuckets = $scoopTools | Where-Object { $_.ScoopBucket } |
-            Select-Object -ExpandProperty ScoopBucket -Unique
+        if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+            Write-Step "Installing Scoop..."
+            try {
+                Set-ExecutionPolicy RemoteSigned -Scope Process -Force
+                # Fetch installer first, then invoke as a scriptblock to avoid nested-IEX parse issues.
+                # -RunAsAdmin bypasses Scoop's elevated-session guard (officially supported).
+                $scoopScript = Invoke-RestMethod -Uri 'https://get.scoop.sh'
+                & ([scriptblock]::Create($scoopScript)) -RunAsAdmin
+                Write-OK 'Scoop'
+                $results.Success.Add('Scoop')
+            } catch {
+                Write-Fail "Scoop - $_"
+                $results.Failed.Add('Scoop')
+            }
+        } elseif ($scoopBootstrap) {
+            Write-OK 'Scoop (already present)'
+            $results.Success.Add('Scoop')
+        }
+
+        # Scoop requires git to add buckets — install it as a dependency if missing
+        if ((Get-Command scoop -ErrorAction SilentlyContinue) -and -not (Get-Command git -ErrorAction SilentlyContinue)) {
+            Write-Step "Installing git (Scoop dependency)..."
+            try {
+                scoop install git | Out-Null
+                Write-OK 'Git'
+            } catch {
+                Write-Fail "Git - $_"
+            }
+        }
+
+        # Add buckets — the standard set plus anything specific tools require (deduplicated)
+        $requiredBuckets = @($ScoopBuckets) + @(
+            $scoopTools | Where-Object { $_.ScoopBucket } | Select-Object -ExpandProperty ScoopBucket
+        ) | Select-Object -Unique
 
         foreach ($bucket in $requiredBuckets) {
             Write-Info "Ensuring scoop bucket: $bucket"
             scoop bucket add $bucket 2>&1 | Out-Null
         }
+    }
+
+    if ($scoopTools) {
+        Write-Host ""
+        Write-Host "  ============================================================" -ForegroundColor DarkGray
+        Write-Host "  SCOOP PACKAGES" -ForegroundColor Yellow
+        Write-Host "  ============================================================" -ForegroundColor DarkGray
 
         foreach ($tool in $scoopTools) {
             Write-Step "Installing $($tool.Name)..."

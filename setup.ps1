@@ -5,16 +5,14 @@
 #   irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1" | iex
 #
 # USAGE (with parameters):
-#   & ([scriptblock]::Create((irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1"))) -WsbProfile work
+#   & ([scriptblock]::Create((irm "https://github.com/chrisbmin/wsb-base/raw/main/setup.ps1"))) -ToolboxPath D:\toolbox
 #
 # PARAMETERS:
-#   -WsbProfile   : work | personal  (pre-selects tool defaults; prompted if omitted)
 #   -ToolboxPath  : path to portable tools folder (default: $env:USERPROFILE\toolbox)
 #   -SkipSettings : skip Windows privacy/UI tweaks
 #   -SkipDebloat  : skip removal of default Windows apps
 #   -SkipUpdate   : skip Windows Update at the end
 param(
-    [string] $WsbProfile   = '',
     [string] $ToolboxPath  = "$env:USERPROFILE\toolbox",
     [switch] $SkipSettings,
     [switch] $SkipDebloat,
@@ -65,7 +63,6 @@ if (Test-Path $stateFile) {
     Write-Host "  Resuming WSB after Windows Update restart..." -ForegroundColor Cyan
 
     $state        = Get-Content $stateFile -Raw | ConvertFrom-Json
-    $WsbProfile   = $state.WsbProfile
     $ToolboxPath  = $state.ToolboxPath
     $SkipSettings = [bool]$state.SkipSettings
     $SkipDebloat  = [bool]$state.SkipDebloat
@@ -89,36 +86,6 @@ try {
 } catch {
     Write-Host "  [!] No internet connection detected. Please connect and re-run." -ForegroundColor Red
     exit 1
-}
-
-# ── Profile selection ─────────────────────────────────────────────────────────
-
-if (-not $isResume) {
-    if ($WsbProfile -ne '' -and $WsbProfile -notin @('work','personal')) {
-        Write-Host "  [!] Invalid -WsbProfile '$WsbProfile'. Must be 'work' or 'personal'." -ForegroundColor Red
-        exit 1
-    }
-
-    # Support env var fallback for irm | iex usage (can't pass params to piped scripts)
-    if ($WsbProfile -eq '' -and $env:WSB_PROFILE -in 'work','personal') {
-        $WsbProfile = $env:WSB_PROFILE
-    }
-
-    if ($WsbProfile -eq '') {
-        Write-Host ""
-        Write-Host "  Select a profile to pre-populate tool defaults:" -ForegroundColor Yellow
-        Write-Host "    1  Work       (sysadmin stack: RSAT, Azure, Nutanix tools, admin utilities)" -ForegroundColor White
-        Write-Host "    2  Personal   (everyday tools: browsers, media, productivity)" -ForegroundColor White
-        Write-Host ""
-        do {
-            $choice = Read-Host "  Enter 1 or 2"
-        } until ($choice -in '1','2')
-        $WsbProfile = if ($choice -eq '1') { 'work' } else { 'personal' }
-    }
-
-    Write-Host ""
-    Write-Host "  Profile: " -ForegroundColor DarkGray -NoNewline
-    Write-Host $WsbProfile.ToUpper() -ForegroundColor Cyan
 }
 
 # ── Toolbox path ──────────────────────────────────────────────────────────────
@@ -196,7 +163,6 @@ if (-not $isResume -and -not $SkipUpdate) {
         Write-Host "  Scheduling WSB to resume automatically after restart..." -ForegroundColor DarkGray
 
         @{
-            WsbProfile   = $WsbProfile
             ToolboxPath  = $ToolboxPath
             SkipSettings = [bool]$SkipSettings
             SkipDebloat  = [bool]$SkipDebloat
@@ -260,38 +226,9 @@ try {
     Write-Host "  [!] Winget setup issue: $_" -ForegroundColor Red
 }
 
-# — Scoop —
-Write-Host ""
-Write-Host "  Scoop..." -ForegroundColor DarkGray
-if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
-    try {
-        Set-ExecutionPolicy RemoteSigned -Scope Process -Force
-        # Fetch installer first, then invoke as a scriptblock to avoid nested-IEX parse issues.
-        # -RunAsAdmin bypasses Scoop's elevated-session guard (officially supported).
-        $scoopScript = Invoke-RestMethod -Uri 'https://get.scoop.sh'
-        & ([scriptblock]::Create($scoopScript)) -RunAsAdmin
-        Write-Host "  Scoop installed." -ForegroundColor Green
-    } catch {
-        Write-Host "  [!] Scoop install failed: $_" -ForegroundColor Red
-    }
-} else {
-    Write-Host "  Scoop already present." -ForegroundColor DarkGray
-}
-
-# Scoop requires git to add buckets — install it first if missing
-if (Get-Command scoop -ErrorAction SilentlyContinue) {
-    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-        Write-Host "  Installing git (required for Scoop buckets)..." -ForegroundColor DarkGray
-        scoop install git | Out-Null
-        Write-Host "  Git installed." -ForegroundColor Green
-    }
-}
-
-# Add standard Scoop buckets
+# Scoop is opt-in now — selectable (with its git dependency) from the tool menu,
+# and bootstrapped on demand by Install-SelectedTools. Just load the catalog here.
 . "$buildFolder\config\tools.ps1"
-foreach ($bucket in $ScoopBuckets) {
-    scoop bucket add $bucket 2>&1 | Out-Null
-}
 
 # ── Windows settings & debloat ────────────────────────────────────────────────
 
@@ -322,7 +259,7 @@ if (-not $SkipDebloat) {
 Write-Host ""
 Write-Host "  Opening tool selection window..." -ForegroundColor DarkGray
 
-$selectedTools = Show-ToolMenu -Catalog $ToolCatalog -WsbProfile $WsbProfile
+$selectedTools = Show-ToolMenu -Catalog $ToolCatalog
 
 if ($null -eq $selectedTools) {
     Write-Host ""
@@ -336,7 +273,7 @@ if ($selectedTools.Count -eq 0) {
 } else {
     Write-Host ""
     Write-Host "  Installing $($selectedTools.Count) selected tools..." -ForegroundColor Cyan
-    $installResults = Install-SelectedTools -SelectedTools $selectedTools -ToolboxPath $ToolboxPath
+    $installResults = Install-SelectedTools -SelectedTools $selectedTools -ToolboxPath $ToolboxPath -ScoopBuckets $ScoopBuckets
 }
 
 # ── Done ──────────────────────────────────────────────────────────────────────
