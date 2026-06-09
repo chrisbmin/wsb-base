@@ -168,6 +168,94 @@ $ToolCatalog = @(
         Manager         = 'winget'
         PackageId       = 'Python.Python.3'
     },
+    @{
+        Name            = 'nmap'
+        Category        = 'Dev Tools'
+        Description     = 'Network scanner — port scanning, service/OS detection, and host discovery'
+        Manager         = 'scoop'
+        PackageId       = 'nmap'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'gping'
+        Category        = 'Dev Tools'
+        Description     = 'Graphical ping in the terminal — plots latency over time, supports multi-host comparison'
+        Manager         = 'scoop'
+        PackageId       = 'gping'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'dog'
+        Category        = 'Dev Tools'
+        Description     = 'Modern dig replacement — cleaner DNS query output with colour and multiple record types'
+        Manager         = 'scoop'
+        PackageId       = 'dog'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'bat'
+        Category        = 'Dev Tools'
+        Description     = 'cat with syntax highlighting and line numbers — ideal for reviewing configs, scripts, and logs'
+        Manager         = 'scoop'
+        PackageId       = 'bat'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'ripgrep'
+        Category        = 'Dev Tools'
+        Description     = 'Extremely fast grep replacement (rg) — searches logs, configs, and code faster than any alternative'
+        Manager         = 'scoop'
+        PackageId       = 'ripgrep'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'duf'
+        Category        = 'Dev Tools'
+        Description     = 'Modern df replacement — clean disk usage and free space overview across all volumes'
+        Manager         = 'scoop'
+        PackageId       = 'duf'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'bottom'
+        Category        = 'Dev Tools'
+        Description     = 'TUI system monitor (btm) — CPU, memory, processes, and network; like htop for Windows'
+        Manager         = 'scoop'
+        PackageId       = 'bottom'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'Terraform'
+        Category        = 'Dev Tools'
+        Description     = 'HashiCorp infrastructure as code — automate provisioning across Nutanix, vSphere, cloud, and on-prem'
+        Manager         = 'scoop'
+        PackageId       = 'terraform'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'kubectl'
+        Category        = 'Dev Tools'
+        Description     = 'Kubernetes CLI — manage clusters including Nutanix Kubernetes Engine (NKE)'
+        Manager         = 'scoop'
+        PackageId       = 'kubectl'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'Helm'
+        Category        = 'Dev Tools'
+        Description     = 'Kubernetes package manager — deploy and manage applications on NKE and other clusters'
+        Manager         = 'scoop'
+        PackageId       = 'helm'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'lazygit'
+        Category        = 'Dev Tools'
+        Description     = 'Terminal UI for Git — visual branch, commit, diff, and merge management without memorising flags'
+        Manager         = 'scoop'
+        PackageId       = 'lazygit'
+        ScoopBucket     = 'extras'
+    },
 
     # ── Productivity ─────────────────────────────────────────────────────────
     @{
