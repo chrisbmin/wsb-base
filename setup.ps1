@@ -322,22 +322,9 @@ if (-not $SkipDebloat) {
 Write-Host ""
 Write-Host "  Opening tool selection window..." -ForegroundColor DarkGray
 
-$selectedTools = Show-ToolMenu -Catalog $ToolCatalog
-
-if ($null -eq $selectedTools) {
-    Write-Host ""
-    Write-Host "  Build cancelled." -ForegroundColor DarkYellow
-    exit 0
-}
-
-if ($selectedTools.Count -eq 0) {
-    Write-Host ""
-    Write-Host "  No tools selected. Skipping installs." -ForegroundColor DarkYellow
-} else {
-    Write-Host ""
-    Write-Host "  Installing $($selectedTools.Count) selected tools..." -ForegroundColor Cyan
-    $installResults = Install-SelectedTools -SelectedTools $selectedTools -ToolboxPath $ToolboxPath -ScoopBuckets $ScoopBuckets
-}
+# Installs are now triggered from inside the GUI (background runspace).
+# ShowDialog() blocks here until the user closes the window.
+Show-ToolMenu -Catalog $ToolCatalog -ToolboxPath $ToolboxPath -ScoopBuckets $ScoopBuckets -BuildFolder $buildFolder
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 

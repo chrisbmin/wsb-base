@@ -4,7 +4,10 @@
 
 function Show-ToolMenu {
     param(
-        [Parameter(Mandatory)] [array] $Catalog
+        [Parameter(Mandatory)] [array]  $Catalog,
+        [string] $ToolboxPath  = '',
+        [array]  $ScoopBuckets = @(),
+        [string] $BuildFolder  = ''
     )
 
     Add-Type -AssemblyName PresentationFramework
@@ -87,7 +90,7 @@ function Show-ToolMenu {
         <StackPanel VerticalAlignment="Center">
           <TextBlock Text="WorkStation Builder" FontFamily="Consolas"
                      FontSize="20" FontWeight="Bold" Foreground="#cba6f7"/>
-          <TextBlock Text="Check boxes to select tools, then click Install Selected."
+          <TextBlock Text="Select tools and click Install. Progress shows in the console — the window stays open."
                      FontFamily="Consolas" FontSize="12" Foreground="#585b70" Margin="0,4,0,0"/>
         </StackPanel>
       </StackPanel>
@@ -108,7 +111,7 @@ function Show-ToolMenu {
             <Button x:Name="BtnInstall" Content="Install Selected"
                     Background="#a6e3a1" Foreground="#1e1e2e" FontWeight="Bold"
                     BorderBrush="#a6e3a1" Margin="0,0,0,8" HorizontalAlignment="Stretch"/>
-            <Button x:Name="BtnCancel" Content="Cancel" HorizontalAlignment="Stretch"/>
+            <Button x:Name="BtnCancel" Content="Close" HorizontalAlignment="Stretch"/>
           </StackPanel>
 
           <StackPanel DockPanel.Dock="Top">
@@ -166,13 +169,18 @@ function Show-ToolMenu {
     $btnInstall = $window.FindName('BtnInstall')
 
     # Script-scope so event handler closures can reach them
-    $script:wsbCount  = $window.FindName('SelectedCount')
-    $script:wsbTotal  = $window.FindName('TotalCount')
-    $script:wsbBoxes  = [System.Collections.Generic.List[PSCustomObject]]::new()
-    $script:wsbCats   = $categories
-    $script:wsbPanel  = $toolsPanel
-    $script:wsbHint   = $searchHint
-    $script:wsbWindow = $window
+    $script:wsbCount        = $window.FindName('SelectedCount')
+    $script:wsbTotal        = $window.FindName('TotalCount')
+    $script:wsbBoxes        = [System.Collections.Generic.List[PSCustomObject]]::new()
+    $script:wsbCats         = $categories
+    $script:wsbPanel        = $toolsPanel
+    $script:wsbHint         = $searchHint
+    $script:wsbWindow       = $window
+    $script:wsbInstallBtn   = $btnInstall
+    $script:wsbToolboxPath  = $ToolboxPath
+    $script:wsbScoopBuckets = $ScoopBuckets
+    $script:wsbBuildFolder  = $BuildFolder
+    $script:wsbInstalling   = $false
 
     $script:wsbTotal.Text = " / $($items.Count)"
 
@@ -198,7 +206,8 @@ function Show-ToolMenu {
         $window.Icon       = $bmp
     } catch { }
 
-    $conv = [System.Windows.Media.BrushConverter]::new()
+    $conv             = [System.Windows.Media.BrushConverter]::new()
+    $script:wsbConv   = $conv
 
     function Update-WsbCount {
         $n = ($script:wsbBoxes | Where-Object { $_.CB.IsChecked }).Count
@@ -309,16 +318,73 @@ function Show-ToolMenu {
         foreach ($e in $script:wsbBoxes) { $e.CB.IsChecked = $false }
     })
     $btnCancel.Add_Click({
-        $script:wsbWindow.Tag = 'cancel'
         $script:wsbWindow.Close()
     })
     $btnInstall.Add_Click({
-        $script:wsbWindow.Tag = 'install'
-        $script:wsbWindow.Close()
+        $selected = @($script:wsbBoxes | Where-Object { $_.CB.IsChecked } | ForEach-Object { $_.Item.Tool })
+        if ($selected.Count -eq 0) { return }
+
+        # Disable button while install runs in the background.
+        $script:wsbInstalling            = $true
+        $script:wsbInstallBtn.IsEnabled  = $false
+        $script:wsbInstallBtn.Content    = 'Installing...'
+        $script:wsbInstallBtn.Background = $script:wsbConv.ConvertFromString('#585b70')
+        $script:wsbInstallBtn.Foreground = $script:wsbConv.ConvertFromString('#cdd6f4')
+
+        Write-Host ''
+        Write-Host "  Starting install of $($selected.Count) tool(s)..." -ForegroundColor Cyan
+
+        # Run Install-SelectedTools in a background runspace that shares $Host so
+        # Write-Host output appears in the console while the GUI stays open.
+        $rs = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace($Host)
+        $rs.ApartmentState = 'STA'
+        $rs.ThreadOptions  = 'ReuseThread'
+        $rs.Open()
+        $rs.SessionStateProxy.SetVariable('SelectedTools',  $selected)
+        $rs.SessionStateProxy.SetVariable('ToolboxPath',    $script:wsbToolboxPath)
+        $rs.SessionStateProxy.SetVariable('ScoopBuckets',   $script:wsbScoopBuckets)
+        $rs.SessionStateProxy.SetVariable('BuildFolder',    $script:wsbBuildFolder)
+
+        $ps = [powershell]::Create()
+        $ps.Runspace = $rs
+        [void]$ps.AddScript({
+            . "$BuildFolder\scripts\Install.ps1"
+            Install-SelectedTools -SelectedTools $SelectedTools -ToolboxPath $ToolboxPath -ScoopBuckets $ScoopBuckets
+        })
+
+        $script:wsbInstallHandle = $ps.BeginInvoke()
+        $script:wsbInstallPs     = $ps
+        $script:wsbInstallRs     = $rs
+
+        # DispatcherTimer polls on the UI thread — no blocking, GUI stays responsive.
+        $timer          = [System.Windows.Threading.DispatcherTimer]::new()
+        $timer.Interval = [TimeSpan]::FromMilliseconds(500)
+        $timer.Add_Tick({
+            if ($script:wsbInstallHandle.IsCompleted) {
+                $this.Stop()
+                try { $script:wsbInstallPs.EndInvoke($script:wsbInstallHandle) } catch {}
+                $script:wsbInstallPs.Dispose()
+                $script:wsbInstallRs.Dispose()
+                $script:wsbInstalling            = $false
+                $script:wsbInstallBtn.IsEnabled  = $true
+                $script:wsbInstallBtn.Content    = 'Install Selected'
+                $script:wsbInstallBtn.Background = $script:wsbConv.ConvertFromString('#a6e3a1')
+                $script:wsbInstallBtn.Foreground = $script:wsbConv.ConvertFromString('#1e1e2e')
+                Write-Host ''
+                Write-Host '  Install complete. Select more tools or close the window.' -ForegroundColor Green
+            }
+        })
+        $timer.Start()
+    })
+
+    # Block the window from closing while an install is in progress.
+    $window.Add_Closing({
+        param($sender, $e)
+        if ($script:wsbInstalling) {
+            Write-Host '  [!] Install in progress — wait for it to finish before closing.' -ForegroundColor Yellow
+            $e.Cancel = $true
+        }
     })
 
     $null = $window.ShowDialog()
-
-    if ($window.Tag -ne 'install') { return $null }
-    return ($script:wsbBoxes | Where-Object { $_.CB.IsChecked } | ForEach-Object { $_.Item.Tool })
 }

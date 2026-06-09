@@ -132,13 +132,6 @@ $ToolCatalog = @(
         PackageId       = 'WinMerge.WinMerge'
     },
     @{
-        Name            = 'Windows PowerToys'
-        Category        = 'Dev Tools'
-        Description     = "Microsoft's power-user utility collection - FancyZones, PowerRename, Run launcher, and more"
-        Manager         = 'winget'
-        PackageId       = 'Microsoft.PowerToys'
-    },
-    @{
         Name            = 'jq'
         Category        = 'Dev Tools'
         Description     = 'Lightweight command-line JSON processor - essential for scripting against APIs'
@@ -155,7 +148,7 @@ $ToolCatalog = @(
         ScoopBucket     = 'main'
     },
 
-    # ── Productivity/Utilities ───────────────────────────────────────────────
+    # ── Productivity ─────────────────────────────────────────────────────────
     @{
         Name            = '1Password'
         Category        = 'Productivity'
@@ -192,6 +185,13 @@ $ToolCatalog = @(
         Manager         = 'winget'
         PackageId       = '7zip.7zip'
     },
+    @{
+        Name            = 'Windows PowerToys'
+        Category        = 'Productivity'
+        Description     = "Microsoft's power-user utility collection - FancyZones, PowerRename, Run launcher, and more"
+        Manager         = 'winget'
+        PackageId       = 'Microsoft.PowerToys'
+    },    
     @{
         Name            = 'Snipaste'
         Category        = 'Productivity'
