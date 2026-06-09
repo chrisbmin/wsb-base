@@ -29,6 +29,8 @@ function Initialize-Toolbox {
     Write-Host "  TOOLBOX POPULATION" -ForegroundColor Yellow
     Write-Host "  ================================================================" -ForegroundColor DarkGray
 
+    Add-FolderToPath $Path
+
     $wc = [System.Net.WebClient]::new()
 
     # ── Sysinternals Suite ────────────────────────────────────────────────────
@@ -118,5 +120,42 @@ function Initialize-Toolbox {
         Write-OK "OpenSSL  →  $opensslBin"
     } catch {
         Write-Fail "OpenSSL - $_"
+    }
+
+    # ── CMake ─────────────────────────────────────────────────────────────────
+    # Resolves the latest release via GitHub API, downloads the Windows x64 zip
+    # (no installer needed), extracts and renames the versioned folder to cmake\.
+
+    Write-Step "CMake..."
+    $cmakeDest = Join-Path $Path 'cmake'
+    try {
+        Write-Info "Resolving latest CMake release..."
+        $release = Invoke-RestMethod -Uri 'https://api.github.com/repos/Kitware/CMake/releases/latest' -ErrorAction Stop
+        $asset   = $release.assets | Where-Object { $_.name -match 'windows-x86_64\.zip$' } | Select-Object -First 1
+
+        if (-not $asset) { throw 'Could not find windows-x86_64.zip asset in latest CMake release.' }
+
+        Write-Info "Version: $($release.tag_name)  ($($asset.name))"
+        $cmakeZip = Join-Path $env:TEMP 'cmake.zip'
+        Write-Info "Downloading..."
+        $wc.DownloadFile($asset.browser_download_url, $cmakeZip)
+
+        Write-Info "Extracting..."
+        Expand-Archive -Path $cmakeZip -DestinationPath $Path -Force
+        Remove-Item $cmakeZip -Force -ErrorAction SilentlyContinue
+
+        # The zip extracts a versioned folder (cmake-X.Y.Z-windows-x86_64); rename it.
+        $extracted = Get-ChildItem -Path $Path -Directory |
+            Where-Object { $_.Name -match '^cmake-.*-windows' } |
+            Select-Object -First 1
+        if (-not $extracted) { throw 'Could not locate extracted cmake folder.' }
+        if (Test-Path $cmakeDest) { Remove-Item $cmakeDest -Recurse -Force }
+        Rename-Item -Path $extracted.FullName -NewName 'cmake'
+
+        $cmakeBin = Join-Path $cmakeDest 'bin'
+        Add-FolderToPath $cmakeBin
+        Write-OK "CMake  →  $cmakeBin"
+    } catch {
+        Write-Fail "CMake - $_"
     }
 }
