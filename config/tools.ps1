@@ -199,6 +199,41 @@ $ToolCatalog = @(
         Manager         = 'winget'
         PackageId       = 'liule.Snipaste'
     },
+    @{
+        Name            = 'Kleopatra'
+        Category        = 'Productivity'
+        Description     = 'Certificate manager and GUI for GnuPG — encrypt, decrypt, sign, and verify files and email (installs full Gpg4win suite)'
+        Manager         = 'winget'
+        PackageId       = 'GnuPG.Gpg4win'
+    },
+    @{
+        Name            = 'Keybase'
+        Category        = 'Productivity'
+        Description     = 'End-to-end encrypted messaging, file sharing, and Git — identity anchored to social profiles'
+        Manager         = 'winget'
+        PackageId       = 'Keybase.Keybase'
+    },
+    @{
+        Name            = 'NZXT CAM'
+        Category        = 'Productivity'
+        Description     = 'System monitoring and NZXT hardware control — CPU/GPU temps, fan curves, RGB, and performance overlay'
+        Manager         = 'winget'
+        PackageId       = 'NZXT.CAM'
+    },
+    @{
+        Name            = 'Raspberry Pi Imager'
+        Category        = 'Productivity'
+        Description     = 'Official Raspberry Pi OS imaging tool — write OS images to SD cards and USB drives'
+        Manager         = 'winget'
+        PackageId       = 'RaspberryPiFoundation.RaspberryPiImager'
+    },
+    @{
+        Name            = 'Thunderbird'
+        Category        = 'Productivity'
+        Description     = 'Mozilla email client — IMAP/POP3/SMTP, calendar, contacts, and end-to-end encryption via OpenPGP'
+        Manager         = 'winget'
+        PackageId       = 'Mozilla.Thunderbird'
+    },
 
     # ── Media & Graphics ─────────────────────────────────────────────────────
     @{
@@ -214,6 +249,28 @@ $ToolCatalog = @(
         Description     = 'Image editor with layers, adjustments, and a rich plugin library'
         Manager         = 'winget'
         PackageId       = 'dotPDN.PaintDotNet'
+    },
+    @{
+        Name            = 'GIMP'
+        Category        = 'Media & Graphics'
+        Description     = 'Free and open-source raster image editor — full Photoshop-style layer and filter toolset'
+        Manager         = 'winget'
+        PackageId       = 'GIMP.GIMP'
+    },
+    @{
+        Name            = 'Inkscape'
+        Category        = 'Media & Graphics'
+        Description     = 'Free and open-source vector graphics editor — SVG-native, great for logos and diagrams'
+        Manager         = 'winget'
+        PackageId       = 'Inkscape.Inkscape'
+    },
+    @{
+        Name            = 'K-Lite Codec Pack Full'
+        Category        = 'Media & Graphics'
+        Description     = 'Comprehensive codec collection for playing any audio/video format in Windows Media Player and other players'
+        Manager         = 'choco'
+        PackageId       = 'k-litecodecpackfull'
+        Notes           = 'Installs the Full variant; Basic/Standard/Mega also available as separate choco packages'
     },
 
     # ── File Management ───────────────────────────────────────────────────────
