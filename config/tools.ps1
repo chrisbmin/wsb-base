@@ -147,6 +147,27 @@ $ToolCatalog = @(
         PackageId       = 'yq'
         ScoopBucket     = 'main'
     },
+    @{
+        Name            = 'Zed'
+        Category        = 'Dev Tools'
+        Description     = 'High-performance multiplayer code editor built in Rust — fast startup, collaborative editing, AI-native'
+        Manager         = 'winget'
+        PackageId       = 'Zed.Zed'
+    },
+    @{
+        Name            = 'Node.js LTS'
+        Category        = 'Dev Tools'
+        Description     = 'Node.js JavaScript runtime (LTS) — includes npm; use for web tooling, scripts, and server-side JS'
+        Manager         = 'winget'
+        PackageId       = 'OpenJS.NodeJS.LTS'
+    },
+    @{
+        Name            = 'Python 3'
+        Category        = 'Dev Tools'
+        Description     = 'Python 3 interpreter — includes pip; adds python and py launcher to PATH'
+        Manager         = 'winget'
+        PackageId       = 'Python.Python.3'
+    },
 
     # ── Productivity ─────────────────────────────────────────────────────────
     @{
