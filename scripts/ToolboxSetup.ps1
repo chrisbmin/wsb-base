@@ -46,7 +46,7 @@ function Initialize-Toolbox {
         Expand-Archive -Path $sysZip -DestinationPath $sysDest -Force
         Remove-Item $sysZip -Force -ErrorAction SilentlyContinue
         Add-FolderToPath $sysDest
-        Write-OK "Sysinternals Suite  →  $sysDest"
+        Write-OK "Sysinternals Suite  ->  $sysDest"
     } catch {
         Write-Fail "Sysinternals - $_"
     }
@@ -74,7 +74,7 @@ function Initialize-Toolbox {
             $wc.DownloadFile($url, $dest)
         }
         Add-FolderToPath $puttyDest
-        Write-OK "PuTTY  →  $puttyDest"
+        Write-OK "PuTTY  ->  $puttyDest"
     } catch {
         Write-Fail "PuTTY - $_"
     }
@@ -117,7 +117,7 @@ function Initialize-Toolbox {
         # Binaries land in <dir>\bin\; add that to PATH so openssl.exe is on the command line.
         $opensslBin = Join-Path $opensslDest 'bin'
         Add-FolderToPath $opensslBin
-        Write-OK "OpenSSL  →  $opensslBin"
+        Write-OK "OpenSSL  ->  $opensslBin"
     } catch {
         Write-Fail "OpenSSL - $_"
     }
@@ -154,7 +154,7 @@ function Initialize-Toolbox {
 
         $cmakeBin = Join-Path $cmakeDest 'bin'
         Add-FolderToPath $cmakeBin
-        Write-OK "CMake  →  $cmakeBin"
+        Write-OK "CMake  ->  $cmakeBin"
     } catch {
         Write-Fail "CMake - $_"
     }
