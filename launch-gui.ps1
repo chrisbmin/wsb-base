@@ -26,7 +26,7 @@ Write-Host '  ## # # ##       ##  ## ##' -ForegroundColor Cyan
 Write-Host '  ### # ###  #######  #### ' -ForegroundColor Blue
 Write-Host ''
 Write-Host '    WorkStation Builder' -ForegroundColor White
-Write-Host '    Tool Installer' -ForegroundColor DarkGray
+Write-Host '    GUI Tool Installer' -ForegroundColor DarkGray
 Write-Host ''
 Write-Host ('=' * 30) -ForegroundColor DarkGray
 Write-Host ''
