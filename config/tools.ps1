@@ -256,6 +256,21 @@ $ToolCatalog = @(
         PackageId       = 'lazygit'
         ScoopBucket     = 'extras'
     },
+    @{
+        Name            = 'curl'
+        Category        = 'Dev Tools'
+        Description     = 'Command-line HTTP/HTTPS/FTP transfer tool — latest build, replaces the Windows built-in curl alias'
+        Manager         = 'scoop'
+        PackageId       = 'curl'
+        ScoopBucket     = 'main'
+    },
+    @{
+        Name            = 'wget'
+        Category        = 'Dev Tools'
+        Description     = 'Non-interactive file downloader — recursive downloads, mirroring, and resumable transfers'
+        Manager         = 'winget'
+        PackageId       = 'GNU.Wget2'
+    },
 
     # ── Productivity ─────────────────────────────────────────────────────────
     @{

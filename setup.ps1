@@ -21,17 +21,17 @@ param(
 
 # ── Banner ────────────────────────────────────────────────────────────────────
 
-Write-Host ('=' * 30) -ForegroundColor DarkGray
 Write-Host ''
-Write-Host '  ##     ##  #######  #### ' -ForegroundColor Yellow
-Write-Host '  ##     ##  ##       ## ##' -ForegroundColor Cyan
-Write-Host '  ##  #  ##  #######  #### ' -ForegroundColor Green
-Write-Host '  ## # # ##       ##  ## ##' -ForegroundColor Cyan
-Write-Host '  ### # ###  #######  #### ' -ForegroundColor Blue
+Write-Host '  ██╗    ██╗  ███████╗  ██████╗ ' -ForegroundColor Cyan
+Write-Host '  ██║    ██║  ██╔════╝  ██╔══██╗' -ForegroundColor Cyan
+Write-Host '  ██║ █╗ ██║  ███████╗  ██████╔╝' -ForegroundColor Cyan
+Write-Host '  ██║███╗██║  ╚════██║  ██╔══██╗' -ForegroundColor Cyan
+Write-Host '  ╚███╔███╔╝  ███████║  ██████╔╝' -ForegroundColor Cyan
+Write-Host '   ╚══╝╚══╝   ╚══════╝  ╚═════╝ ' -ForegroundColor Cyan
 Write-Host ''
-Write-Host '    WorkStation Builder' -ForegroundColor White
+Write-Host '       WorkStation Builder' -ForegroundColor DarkGray
 Write-Host ''
-Write-Host ('=' * 30) -ForegroundColor DarkGray
+Write-Host ('─' * 34) -ForegroundColor DarkGray
 Write-Host ''
 
 # ── Admin check ───────────────────────────────────────────────────────────────
